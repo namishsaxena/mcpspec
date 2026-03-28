@@ -11,7 +11,7 @@
 | 04 | Types & Schema | completed | 4 | 15 interfaces in types.ts, JSON Schema with 10 $defs, all checks pass |
 | 05 | Core Introspection | completed | 4 | introspect + filter modules, 15 tests, removed deprecated Server type |
 | 06 | Spec Generation | completed | 5 | 23 tests, generateSpec + serializeSpec, fixed cleanUndefined generic for TS6 strict |
-| 07 | Docs UI | completed | 5 | 5 files: styles.css, script.js, index.html, build script, built docs.html (21KB) |
+| 07 | Docs UI | completed | 5 | 5 files + post-plan polish: 3 themes (dark/light/contrast), SVG icons, a11y (ARIA, keyboard nav, focus-visible, skip-link), copy button fix, 29KB built |
 | 08 | HTTP Serving | ready | — | Fully rewritten: raw http, includes /mcp route |
 | 09 | Example Server | ready | — | Updated: no fastify dep |
 | 10 | Documentation | ready | — | Updated: raw http references |
@@ -35,6 +35,7 @@
 - [2026-03-28] Empty MCP servers don't advertise capabilities — check before calling list methods
 - [2026-03-28] `cleanUndefined` generic changed from `T extends Record<string, unknown>` to `T extends object` with cast — TS6 strict mode rejects interfaces as `Record<string, unknown>`
 - [2026-03-28] generate.ts always includes tools/resources/prompts arrays (even if empty after filtering) — plan tests expect `toHaveLength(0)` not `toBeUndefined()`
+- [2026-03-28] Docs UI enhanced beyond plan: added light + high-contrast themes (plan only had dark), inline SVG icons, full ARIA/keyboard accessibility, fixed copy button (JSON double quotes broke onclick HTML attribute — rewrote to read pre.textContent)
 
 ## Next Session Should
 
