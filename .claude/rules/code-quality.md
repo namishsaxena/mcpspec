@@ -1,6 +1,5 @@
 ---
 description: Core code quality standards for mcpspec
-alwaysApply: true
 ---
 
 # Code Quality Rules

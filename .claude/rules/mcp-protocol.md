@@ -1,6 +1,5 @@
 ---
 description: MCP protocol rules specific to mcpspec
-alwaysApply: true
 ---
 
 # MCP Protocol Rules

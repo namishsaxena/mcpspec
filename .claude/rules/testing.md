@@ -1,6 +1,5 @@
 ---
 description: Testing standards and TDD practices
-alwaysApply: true
 ---
 
 # Testing Rules

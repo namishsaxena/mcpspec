@@ -1,6 +1,6 @@
 ---
 description: Security rules for mcpspec source code
-globs:
+paths:
   - "packages/typescript/src/**"
   - "packages/python/src/**"
 ---
