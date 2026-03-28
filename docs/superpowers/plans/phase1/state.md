@@ -11,7 +11,7 @@
 | 04 | Types & Schema | completed | 4 | 15 interfaces in types.ts, JSON Schema with 10 $defs, all checks pass |
 | 05 | Core Introspection | completed | 4 | introspect + filter modules, 15 tests, removed deprecated Server type |
 | 06 | Spec Generation | completed | 5 | 23 tests, generateSpec + serializeSpec, fixed cleanUndefined generic for TS6 strict |
-| 07 | Docs UI | ready | — | No changes needed |
+| 07 | Docs UI | completed | 5 | 5 files: styles.css, script.js, index.html, build script, built docs.html (21KB) |
 | 08 | HTTP Serving | ready | — | Fully rewritten: raw http, includes /mcp route |
 | 09 | Example Server | ready | — | Updated: no fastify dep |
 | 10 | Documentation | ready | — | Updated: raw http references |
@@ -20,8 +20,8 @@
 ## Current Session
 
 - **Session:** 5 (2026-03-28)
-- **Phase:** Implementation in progress. Sub-Plans 00-06 done.
-- **Completed this session:** SP06 (Spec Generation)
+- **Phase:** Implementation in progress. Sub-Plans 00-07 done.
+- **Completed this session:** SP06 (Spec Generation), SP07 (Docs UI)
 
 ## Decisions & Deviations
 
@@ -38,8 +38,8 @@
 
 ## Next Session Should
 
-- Continue with Sub-Plan 07: Docs UI
-- Execute sub-plans sequentially: 07 → 08 → ... → 11
+- Continue with Sub-Plan 08: HTTP Serving
+- Execute sub-plans sequentially: 08 → 09 → ... → 11
 - Read each sub-plan fully before executing
 - Update this file after completing each sub-plan
 - Manual testing checkpoint at end of each sub-plan
