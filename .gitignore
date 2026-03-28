@@ -41,3 +41,7 @@ htmlcov/
 *.log
 .turbo/
 .superpowers/
+mcpspec-project-plan.md
+
+# custom
+docs/superpowers/
