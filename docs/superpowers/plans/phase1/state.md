@@ -1,0 +1,45 @@
+# Implementation State
+
+## Progress
+
+| # | Sub-Plan | Status | Session | Notes |
+|---|----------|--------|---------|-------|
+| 00 | Project Foundation | completed | 3 | All 5 files created, all verification checks pass |
+| 01 | OSS Setup | completed | 3 | All 9 files created, all verification checks pass |
+| 02 | Tooling Setup | completed | 3 | 14 files: settings, 4 hooks, 3 agents, 4 rules, 2 commands |
+| 03 | Monorepo Scaffold | completed | 3 | pnpm build + test pass, ESM output verified |
+| 04 | Types & Schema | completed | 4 | 15 interfaces in types.ts, JSON Schema with 10 $defs, all checks pass |
+| 05 | Core Introspection | completed | 4 | introspect + filter modules, 15 tests, removed deprecated Server type |
+| 06 | Spec Generation | completed | 5 | 23 tests, generateSpec + serializeSpec, fixed cleanUndefined generic for TS6 strict |
+| 07 | Docs UI | ready | — | No changes needed |
+| 08 | HTTP Serving | ready | — | Fully rewritten: raw http, includes /mcp route |
+| 09 | Example Server | ready | — | Updated: no fastify dep |
+| 10 | Documentation | ready | — | Updated: raw http references |
+| 11 | Integration Verification | ready | — | No changes needed |
+
+## Current Session
+
+- **Session:** 5 (2026-03-28)
+- **Phase:** Implementation in progress. Sub-Plans 00-06 done.
+- **Completed this session:** SP06 (Spec Generation)
+
+## Decisions & Deviations
+
+- [2026-03-28] Express replaced with raw Node.js `http` — mcpspec is a library with only 3 routes, no framework needed. Direct compat with MCP SDK's StreamableHTTPServerTransport. Evaluated Express (legacy, but zero-bridging) and Fastify (modern, but adds bridging complexity). Raw http wins: zero deps, zero opinions forced on users.
+- [2026-03-28] Dependency versions verified against npm registry
+- [2026-03-28] Plan split from 1 monolithic plan into 12 sub-plans
+- [2026-03-28] Sub-Plan 00+02 rewritten with dotclaude-inspired structure (agents, rules, hooks, commands)
+- [2026-03-28] Removed deprecated `Server` type from introspect.ts — `McpServer` has its own `connect()`, no need for raw Server
+- [2026-03-28] Fixed plan bug in filter test: `*_user` matches 2 items not 3 (`get_users` ends in 's')
+- [2026-03-28] `client.connect()` returns `void` not init result — use `client.getServerCapabilities()` instead
+- [2026-03-28] Empty MCP servers don't advertise capabilities — check before calling list methods
+- [2026-03-28] `cleanUndefined` generic changed from `T extends Record<string, unknown>` to `T extends object` with cast — TS6 strict mode rejects interfaces as `Record<string, unknown>`
+- [2026-03-28] generate.ts always includes tools/resources/prompts arrays (even if empty after filtering) — plan tests expect `toHaveLength(0)` not `toBeUndefined()`
+
+## Next Session Should
+
+- Continue with Sub-Plan 07: Docs UI
+- Execute sub-plans sequentially: 07 → 08 → ... → 11
+- Read each sub-plan fully before executing
+- Update this file after completing each sub-plan
+- Manual testing checkpoint at end of each sub-plan
