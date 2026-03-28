@@ -1,0 +1,72 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:ts.sdk.modelcontextprotocol.io)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:modelcontextprotocol.github.io)",
+      "WebFetch(domain:py.sdk.modelcontextprotocol.io)",
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:pypi.org)"
+    ],
+    "deny": [
+      "Edit(file_path:.env)",
+      "Write(file_path:.env)",
+      "Edit(file_path:*.pem)",
+      "Write(file_path:*.pem)",
+      "Edit(file_path:*.key)",
+      "Write(file_path:*.key)",
+      "Edit(file_path:*credentials*)",
+      "Write(file_path:*credentials*)",
+      "Edit(file_path:secrets/*)",
+      "Write(file_path:secrets/*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/warn-large-files.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/block-dangerous-commands.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-files.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/scan-secrets.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}
