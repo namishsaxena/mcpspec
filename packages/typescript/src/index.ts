@@ -29,3 +29,5 @@ export type {
 
 export { filterItems, matchGlob } from "./filter.js";
 export type { FilterOptions } from "./filter.js";
+
+export { generateSpec, serializeSpec } from "./generate.js";
