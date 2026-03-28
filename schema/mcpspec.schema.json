@@ -1,0 +1,328 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcpspec.dev/schema/0.1.0.json",
+  "title": "mcpspec",
+  "description": "Schema for mcpspec.yaml — an OpenAPI-like spec format for MCP servers.",
+  "type": "object",
+  "required": ["mcpspec", "info"],
+  "additionalProperties": false,
+  "properties": {
+    "mcpspec": {
+      "type": "string",
+      "description": "The mcpspec format version.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["0.1.0"]
+    },
+    "$schema": {
+      "type": "string",
+      "description": "URL to the JSON Schema for this mcpspec version.",
+      "format": "uri"
+    },
+    "info": {
+      "$ref": "#/$defs/info"
+    },
+    "transport": {
+      "type": "array",
+      "description": "Transport configurations for connecting to this server.",
+      "items": {
+        "$ref": "#/$defs/transport"
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "Server capabilities from the MCP initialize handshake.",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "description": "Tools exposed by this MCP server.",
+      "items": {
+        "$ref": "#/$defs/tool"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "description": "Resources exposed by this MCP server.",
+      "items": {
+        "$ref": "#/$defs/resource"
+      }
+    },
+    "prompts": {
+      "type": "array",
+      "description": "Prompts exposed by this MCP server.",
+      "items": {
+        "$ref": "#/$defs/prompt"
+      }
+    }
+  },
+  "$defs": {
+    "info": {
+      "type": "object",
+      "description": "Server metadata.",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Machine-readable server name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Server version string."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-friendly display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this server does."
+        },
+        "serverUrl": {
+          "type": "string",
+          "description": "Base URL where this server is deployed.",
+          "format": "uri"
+        },
+        "repository": {
+          "type": "string",
+          "description": "URL to the source code repository.",
+          "format": "uri"
+        },
+        "license": {
+          "type": "string",
+          "description": "SPDX license identifier.",
+          "examples": ["MIT", "Apache-2.0"]
+        },
+        "authors": {
+          "type": "array",
+          "description": "Authors or maintainers of this server.",
+          "items": {
+            "$ref": "#/$defs/author"
+          }
+        }
+      }
+    },
+    "author": {
+      "type": "object",
+      "description": "An author or maintainer.",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Author name."
+        },
+        "url": {
+          "type": "string",
+          "description": "Author URL (website, GitHub profile, etc.).",
+          "format": "uri"
+        }
+      }
+    },
+    "transport": {
+      "type": "object",
+      "description": "A transport configuration for connecting to this server.",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Transport type.",
+          "enum": ["streamable-http", "stdio"]
+        },
+        "url": {
+          "type": "string",
+          "description": "Server URL for streamable-http transport.",
+          "format": "uri"
+        },
+        "command": {
+          "type": "string",
+          "description": "Command to start the server for stdio transport."
+        },
+        "auth": {
+          "$ref": "#/$defs/auth"
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "description": "Authentication configuration.",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Authentication type.",
+          "enum": ["oauth2", "bearer", "api-key", "none"]
+        },
+        "tokenUrl": {
+          "type": "string",
+          "description": "OAuth2 token endpoint URL.",
+          "format": "uri"
+        },
+        "scopes": {
+          "type": "array",
+          "description": "OAuth2 scopes required.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "description": "An MCP tool.",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Machine-readable tool name."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-friendly display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "What this tool does."
+        },
+        "group": {
+          "type": "string",
+          "description": "Logical group this tool belongs to."
+        },
+        "annotations": {
+          "$ref": "#/$defs/toolAnnotations"
+        },
+        "inputSchema": {
+          "type": "object",
+          "description": "JSON Schema for tool input parameters."
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "JSON Schema for tool output."
+        },
+        "examples": {
+          "type": "array",
+          "description": "Usage examples for this tool.",
+          "items": {
+            "$ref": "#/$defs/toolExample"
+          }
+        }
+      }
+    },
+    "toolAnnotations": {
+      "type": "object",
+      "description": "MCP tool annotations describing behavior hints.",
+      "additionalProperties": false,
+      "properties": {
+        "readOnlyHint": {
+          "type": "boolean",
+          "description": "If true, the tool does not modify any state."
+        },
+        "destructiveHint": {
+          "type": "boolean",
+          "description": "If true, the tool may perform destructive operations (delete, overwrite)."
+        },
+        "idempotentHint": {
+          "type": "boolean",
+          "description": "If true, calling the tool multiple times with the same input has the same effect."
+        },
+        "openWorldHint": {
+          "type": "boolean",
+          "description": "If true, the tool interacts with external systems beyond the server."
+        }
+      }
+    },
+    "toolExample": {
+      "type": "object",
+      "description": "A usage example for a tool.",
+      "required": ["title", "input"],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Short title describing this example."
+        },
+        "input": {
+          "type": "object",
+          "description": "Example input parameters."
+        },
+        "description": {
+          "type": "string",
+          "description": "Longer description of what this example demonstrates."
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "description": "An MCP resource.",
+      "required": ["uri"],
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": "Resource URI or URI template."
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable resource name."
+        },
+        "description": {
+          "type": "string",
+          "description": "What this resource provides."
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME type of the resource content.",
+          "examples": ["application/json", "text/plain"]
+        }
+      }
+    },
+    "prompt": {
+      "type": "object",
+      "description": "An MCP prompt template.",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Machine-readable prompt name."
+        },
+        "description": {
+          "type": "string",
+          "description": "What this prompt generates."
+        },
+        "arguments": {
+          "type": "array",
+          "description": "Arguments this prompt accepts.",
+          "items": {
+            "$ref": "#/$defs/promptArgument"
+          }
+        }
+      }
+    },
+    "promptArgument": {
+      "type": "object",
+      "description": "An argument for a prompt.",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Argument name."
+        },
+        "description": {
+          "type": "string",
+          "description": "What this argument controls."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether this argument is required."
+        }
+      }
+    }
+  }
+}

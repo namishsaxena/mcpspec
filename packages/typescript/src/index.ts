@@ -1,4 +1,19 @@
 // mcpspec — OpenAPI-like specs for MCP servers
-// This file will export the public API in subsequent sub-plans.
 
-export {};
+export type {
+  McpSpec,
+  McpSpecInfo,
+  McpSpecAuthor,
+  McpSpecTransport,
+  McpSpecAuth,
+  McpSpecTool,
+  McpSpecToolAnnotations,
+  McpSpecToolExample,
+  McpSpecResource,
+  McpSpecPrompt,
+  McpSpecPromptArgument,
+  McpSpecOptions,
+  ToolOverride,
+  ResourceOverride,
+  PromptOverride,
+} from "./types.js";
