@@ -39,10 +39,13 @@
       var authType = transport && transport.auth ? transport.auth.type : null;
 
       var html = '<div class="header">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
       html += '<h1>' + esc(info.title || info.name || "MCP Server");
       html += ' <span class="version">v' + esc(info.version || "0.0.0") + '</span>';
       html += ' <span class="health-badge">healthy</span>';
       html += '</h1>';
+      html += '<button class="theme-toggle" onclick="toggleTheme()">Light</button>';
+      html += '</div>';
 
       if (info.description) {
         html += '<p class="description">' + esc(info.description) + '</p>';

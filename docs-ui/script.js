@@ -26,6 +26,25 @@ function copyToClipboard(text, btn) {
   });
 }
 
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute("data-theme") || "dark";
+  var next = current === "dark" ? "light" : "dark";
+  html.setAttribute("data-theme", next);
+  try { localStorage.setItem("mcpspec-theme", next); } catch (e) {}
+  var btn = document.querySelector(".theme-toggle");
+  if (btn) btn.textContent = next === "dark" ? "Light" : "Dark";
+}
+
+function initTheme() {
+  var saved = null;
+  try { saved = localStorage.getItem("mcpspec-theme"); } catch (e) {}
+  var theme = saved || "dark";
+  document.documentElement.setAttribute("data-theme", theme);
+  var btn = document.querySelector(".theme-toggle");
+  if (btn) btn.textContent = theme === "dark" ? "Light" : "Dark";
+}
+
 function switchTab(tabEl) {
   var tabs = document.querySelectorAll(".section-tab");
   var sections = document.querySelectorAll(".section-content");
@@ -46,6 +65,7 @@ function switchTab(tabEl) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  initTheme();
   var tabs = document.querySelectorAll(".section-tab");
   tabs.forEach(function (tab) {
     tab.addEventListener("click", function () {

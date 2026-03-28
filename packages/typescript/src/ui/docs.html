@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>__TITLE__ — mcpspec</title>
-  <style>:root {
+  <style>:root, [data-theme="dark"] {
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;
   --bg-tertiary: #21262d;
@@ -16,8 +16,32 @@
   --accent-red: #f85149;
   --accent-yellow: #d29922;
   --accent-purple: #bc8cff;
+  --badge-readonly-bg: rgba(63, 185, 80, 0.15);
+  --badge-destructive-bg: rgba(248, 81, 73, 0.15);
+  --badge-idempotent-bg: rgba(210, 153, 34, 0.15);
+  --badge-openworld-bg: rgba(188, 140, 255, 0.15);
+  --health-bg: rgba(63, 185, 80, 0.1);
   --font-mono: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #eaeef2;
+  --border: #d0d7de;
+  --text-primary: #1f2328;
+  --text-secondary: #656d76;
+  --text-link: #0969da;
+  --accent-green: #1a7f37;
+  --accent-red: #cf222e;
+  --accent-yellow: #9a6700;
+  --accent-purple: #8250df;
+  --badge-readonly-bg: rgba(26, 127, 55, 0.1);
+  --badge-destructive-bg: rgba(207, 34, 46, 0.1);
+  --badge-idempotent-bg: rgba(154, 103, 0, 0.1);
+  --badge-openworld-bg: rgba(130, 80, 223, 0.1);
+  --health-bg: rgba(26, 127, 55, 0.1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -62,7 +86,7 @@ body {
   gap: 4px;
   font-size: 12px;
   color: var(--accent-green);
-  background: rgba(63, 185, 80, 0.1);
+  background: var(--health-bg);
   padding: 2px 8px;
   border-radius: 12px;
 }
@@ -197,10 +221,10 @@ body {
   font-family: var(--font-mono);
   white-space: nowrap;
 }
-.badge-readonly { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
-.badge-destructive { background: rgba(248, 81, 73, 0.15); color: var(--accent-red); }
-.badge-idempotent { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
-.badge-openworld { background: rgba(188, 140, 255, 0.15); color: var(--accent-purple); }
+.badge-readonly { background: var(--badge-readonly-bg); color: var(--accent-green); }
+.badge-destructive { background: var(--badge-destructive-bg); color: var(--accent-red); }
+.badge-idempotent { background: var(--badge-idempotent-bg); color: var(--accent-yellow); }
+.badge-openworld { background: var(--badge-openworld-bg); color: var(--accent-purple); }
 
 /* Tool detail */
 .tool-detail {
@@ -380,6 +404,20 @@ body {
 .section-content { display: none; }
 .section-content.active { display: block; }
 
+/* Theme toggle */
+.theme-toggle {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  line-height: 1;
+}
+.theme-toggle:hover { color: var(--text-primary); }
+
 /* Responsive */
 @media (max-width: 640px) {
   .param-row { grid-template-columns: 1fr; gap: 2px; }
@@ -423,6 +461,25 @@ function copyToClipboard(text, btn) {
   });
 }
 
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute("data-theme") || "dark";
+  var next = current === "dark" ? "light" : "dark";
+  html.setAttribute("data-theme", next);
+  try { localStorage.setItem("mcpspec-theme", next); } catch (e) {}
+  var btn = document.querySelector(".theme-toggle");
+  if (btn) btn.textContent = next === "dark" ? "Light" : "Dark";
+}
+
+function initTheme() {
+  var saved = null;
+  try { saved = localStorage.getItem("mcpspec-theme"); } catch (e) {}
+  var theme = saved || "dark";
+  document.documentElement.setAttribute("data-theme", theme);
+  var btn = document.querySelector(".theme-toggle");
+  if (btn) btn.textContent = theme === "dark" ? "Light" : "Dark";
+}
+
 function switchTab(tabEl) {
   var tabs = document.querySelectorAll(".section-tab");
   var sections = document.querySelectorAll(".section-content");
@@ -443,6 +500,7 @@ function switchTab(tabEl) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  initTheme();
   var tabs = document.querySelectorAll(".section-tab");
   tabs.forEach(function (tab) {
     tab.addEventListener("click", function () {
@@ -481,10 +539,13 @@ document.addEventListener("DOMContentLoaded", function () {
       var authType = transport && transport.auth ? transport.auth.type : null;
 
       var html = '<div class="header">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
       html += '<h1>' + esc(info.title || info.name || "MCP Server");
       html += ' <span class="version">v' + esc(info.version || "0.0.0") + '</span>';
       html += ' <span class="health-badge">healthy</span>';
       html += '</h1>';
+      html += '<button class="theme-toggle" onclick="toggleTheme()">Light</button>';
+      html += '</div>';
 
       if (info.description) {
         html += '<p class="description">' + esc(info.description) + '</p>';
