@@ -17,3 +17,15 @@ export type {
   ResourceOverride,
   PromptOverride,
 } from "./types.js";
+
+export { introspect } from "./introspect.js";
+export type {
+  IntrospectionResult,
+  IntrospectionTool,
+  IntrospectionResource,
+  IntrospectionPrompt,
+  IntrospectionPromptArgument,
+} from "./introspect.js";
+
+export { filterItems, matchGlob } from "./filter.js";
+export type { FilterOptions } from "./filter.js";
