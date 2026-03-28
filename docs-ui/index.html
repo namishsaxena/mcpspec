@@ -7,6 +7,7 @@
   <style>__STYLES__</style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
   <div class="container" id="app"></div>
   <script>__SCRIPT__</script>
   <script>
@@ -20,6 +21,30 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
+    }
+
+    function iconSun() {
+      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>';
+    }
+
+    function iconMoon() {
+      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M13.5 8.5a5.5 5.5 0 0 1-7-7 5.5 5.5 0 1 0 7 7z"/></svg>';
+    }
+
+    function iconCopy() {
+      return '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M2 11V2.5A.5.5 0 0 1 2.5 2H11"/></svg>';
+    }
+
+    function iconCheck() {
+      return '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8.5l3.5 3.5 6.5-7"/></svg>';
+    }
+
+    function iconChevron() {
+      return '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4.5 2l4 4-4 4"/></svg>';
+    }
+
+    function iconContrast() {
+      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/></svg>';
     }
 
     function groupTools(tools) {
@@ -44,7 +69,7 @@
       html += ' <span class="version">v' + esc(info.version || "0.0.0") + '</span>';
       html += ' <span class="health-badge">healthy</span>';
       html += '</h1>';
-      html += '<button class="theme-toggle" onclick="toggleTheme()">Light</button>';
+      html += '<button class="theme-toggle" onclick="toggleTheme()" aria-label="Switch to light theme">' + iconSun() + ' Light</button>';
       html += '</div>';
 
       if (info.description) {
@@ -81,10 +106,10 @@
     }
 
     function renderTabs(toolCount, resourceCount, promptCount) {
-      return '<div class="section-tabs">' +
-        '<div class="section-tab active" data-section="tools-section">Tools <span class="count">(' + toolCount + ')</span></div>' +
-        '<div class="section-tab" data-section="resources-section">Resources <span class="count">(' + resourceCount + ')</span></div>' +
-        '<div class="section-tab" data-section="prompts-section">Prompts <span class="count">(' + promptCount + ')</span></div>' +
+      return '<div class="section-tabs" role="tablist" aria-label="Server capabilities">' +
+        '<div class="section-tab active" role="tab" tabindex="0" aria-selected="true" data-section="tools-section">Tools <span class="count">(' + toolCount + ')</span></div>' +
+        '<div class="section-tab" role="tab" tabindex="0" aria-selected="false" data-section="resources-section">Resources <span class="count">(' + resourceCount + ')</span></div>' +
+        '<div class="section-tab" role="tab" tabindex="0" aria-selected="false" data-section="prompts-section">Prompts <span class="count">(' + promptCount + ')</span></div>' +
         '</div>';
     }
 
@@ -148,14 +173,13 @@
       for (var i = 0; i < examples.length; i++) {
         var ex = examples[i];
         var json = JSON.stringify(ex.input, null, 2);
-        var escapedJson = json.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n");
         html += '<div class="example-title">' + esc(ex.title) + '</div>';
         if (ex.description) {
           html += '<div class="example-desc">' + esc(ex.description) + '</div>';
         }
         html += '<div class="example-code">';
         html += '<pre>' + esc(json) + '</pre>';
-        html += '<button class="copy-btn" onclick="copyToClipboard(\'' + escapedJson + '\', this)">copy</button>';
+        html += '<button class="copy-btn" onclick="copyFromCode(this)" aria-label="Copy example to clipboard">' + iconCopy() + ' copy</button>';
         html += '</div>';
       }
       html += '</div>';
@@ -164,7 +188,7 @@
 
     function renderToolCard(tool) {
       var html = '<div class="tool-card">';
-      html += '<div class="tool-card-header" onclick="toggleTool(this)">';
+      html += '<div class="tool-card-header" role="button" tabindex="0" aria-expanded="false" onclick="toggleTool(this)">';
       html += '<div class="tool-card-left">';
       html += '<span class="tool-name">' + esc(tool.name) + '</span>';
       if (tool.title) {
@@ -193,13 +217,13 @@
 
     function renderToolsSection(tools) {
       if (!tools || tools.length === 0) {
-        return '<div id="tools-section" class="section-content active">' +
+        return '<div id="tools-section" class="section-content active" role="tabpanel" aria-label="Tools">' +
           '<div class="empty-state">No tools registered.</div></div>';
       }
 
       var groups = groupTools(tools);
       var groupNames = Object.keys(groups);
-      var html = '<div id="tools-section" class="section-content active">';
+      var html = '<div id="tools-section" class="section-content active" role="tabpanel" aria-label="Tools">';
 
       for (var g = 0; g < groupNames.length; g++) {
         var groupName = groupNames[g];
@@ -207,8 +231,8 @@
         var toolWord = groupToolList.length === 1 ? "tool" : "tools";
 
         html += '<div class="tool-group">';
-        html += '<div class="tool-group-header open" onclick="toggleGroup(this)">';
-        html += '<span class="chevron">&#9656;</span> ' + esc(groupName);
+        html += '<div class="tool-group-header open" role="button" tabindex="0" aria-expanded="true" onclick="toggleGroup(this)">';
+        html += '<span class="chevron">' + iconChevron() + '</span> ' + esc(groupName);
         html += '<span class="group-count">' + groupToolList.length + ' ' + toolWord + '</span>';
         html += '</div>';
         html += '<div class="tool-group-body open">';
@@ -223,7 +247,7 @@
     }
 
     function renderResourcesSection(resources) {
-      var html = '<div id="resources-section" class="section-content">';
+      var html = '<div id="resources-section" class="section-content" role="tabpanel" aria-label="Resources">';
       if (!resources || resources.length === 0) {
         return html + '<div class="empty-state">No resources registered.</div></div>';
       }
@@ -265,7 +289,7 @@
     }
 
     function renderPromptsSection(prompts) {
-      var html = '<div id="prompts-section" class="section-content">';
+      var html = '<div id="prompts-section" class="section-content" role="tabpanel" aria-label="Prompts">';
       if (!prompts || prompts.length === 0) {
         return html + '<div class="empty-state">No prompts registered.</div></div>';
       }
@@ -307,6 +331,7 @@
 
       app.innerHTML =
         renderHeader(spec) +
+        '<div id="main-content"></div>' +
         renderTabs(tools.length, resources.length, prompts.length) +
         renderToolsSection(tools) +
         renderResourcesSection(resources) +
