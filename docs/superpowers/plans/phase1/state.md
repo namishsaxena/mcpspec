@@ -13,15 +13,15 @@
 | 06 | Spec Generation | completed | 5 | 23 tests, generateSpec + serializeSpec, fixed cleanUndefined generic for TS6 strict |
 | 07 | Docs UI | completed | 5 | 5 files + post-plan polish: 3 themes (dark/light/contrast), SVG icons, a11y (ARIA, keyboard nav, focus-visible, skip-link), copy button fix, 29KB built |
 | 08 | HTTP Serving | completed | 6 | serve.ts (8 tests), mcpspec.ts (11 tests), /docs + /mcpspec.yaml + /mcp routes, lazy introspection with caching |
-| 09 | Example Server | ready | — | Updated: no fastify dep |
+| 09 | Example Server | completed | 7 | Task Manager demo, all endpoints verified, fixed tsconfig types + lib build copy |
 | 10 | Documentation | ready | — | Updated: raw http references |
 | 11 | Integration Verification | ready | — | No changes needed |
 
 ## Current Session
 
-- **Session:** 6 (2026-03-28)
-- **Phase:** Implementation in progress. Sub-Plans 00-08 done.
-- **Completed this session:** SP08 (HTTP Serving)
+- **Session:** 7 (2026-03-29)
+- **Phase:** Implementation in progress. Sub-Plans 00-09 done.
+- **Completed this session:** SP09 (Example Server)
 
 ## Decisions & Deviations
 
@@ -39,11 +39,19 @@
 - [2026-03-28] Added `"types": ["node"]` to tsconfig.json — needed for `node:http`/`node:fs`/`node:path`/`node:url` imports and `import.meta.url`
 - [2026-03-28] Plan test assertion `mcpspec: "0.1.0"` wrong — js-yaml outputs `mcpspec: 0.1.0` without quotes (valid YAML plain scalar), fixed test to match
 - [2026-03-28] `mcpspec()` only accepts `McpServer` (not `McpServer | Server`) — aligns with `introspect()` signature, accesses `.server` property for raw Server when needed for MCP transport
+- [2026-03-29] Example tsconfig needs `"types": ["node"]` — same fix as main package, required for `process` and `console` globals
+- [2026-03-29] Library build script needs `cp -r src/ui dist/ui` — tsc doesn't copy non-TS files, docs.html was falling back to bare JSON template
+- [2026-03-29] Migrated example server from deprecated `server.tool()`/`.resource()`/`.prompt()` to `registerTool`/`registerResource`/`registerPrompt` — MCP SDK v1.28.0 deprecates old API
+- [2026-03-29] Added tool annotations to example server — demonstrates readOnly, idempotent, destructive, openWorld badges in docs UI
+
+## Future Improvements (Parked)
+
+- **Real health badge**: Currently hardcoded "healthy" in docs UI. Should reflect introspection status: healthy (all capabilities listed), degraded (partial failure), error (introspection failed). Track status in introspect.ts, pass to template via spec data.
 
 ## Next Session Should
 
-- Continue with Sub-Plan 09: Example Server
-- Execute sub-plans sequentially: 09 → 10 → 11
+- Continue with Sub-Plan 10: Documentation
+- Execute sub-plans sequentially: 10 → 11
 - Read each sub-plan fully before executing
 - Update this file after completing each sub-plan
 - Manual testing checkpoint at end of each sub-plan

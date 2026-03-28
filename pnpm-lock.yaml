@@ -8,6 +8,25 @@ importers:
 
   .: {}
 
+  examples/typescript:
+    dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.28.0
+        version: 1.28.0(zod@4.3.6)
+      mcpspec:
+        specifier: workspace:*
+        version: link:../../packages/typescript
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.5.0
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+
   packages/typescript:
     dependencies:
       js-yaml:
