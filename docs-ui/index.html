@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>__TITLE__ — mcpspec</title>
+  <style>__STYLES__</style>
+</head>
+<body>
+  <div class="container" id="app"></div>
+  <script>__SCRIPT__</script>
+  <script>
+    var spec = __SPEC_DATA__;
+
+    function esc(str) {
+      if (str == null) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function groupTools(tools) {
+      var groups = {};
+      for (var i = 0; i < tools.length; i++) {
+        var g = tools[i].group || "Ungrouped";
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(tools[i]);
+      }
+      return groups;
+    }
+
+    function renderHeader(spec) {
+      var info = spec.info || {};
+      var transport = (spec.transport || [])[0];
+      var transportType = transport ? transport.type : null;
+      var authType = transport && transport.auth ? transport.auth.type : null;
+
+      var html = '<div class="header">';
+      html += '<h1>' + esc(info.title || info.name || "MCP Server");
+      html += ' <span class="version">v' + esc(info.version || "0.0.0") + '</span>';
+      html += ' <span class="health-badge">healthy</span>';
+      html += '</h1>';
+
+      if (info.description) {
+        html += '<p class="description">' + esc(info.description) + '</p>';
+      }
+
+      if (transportType || authType) {
+        html += '<div class="transport-info">';
+        if (transportType) {
+          html += '<span>Transport: <span class="tag">' + esc(transportType) + '</span></span>';
+        }
+        if (authType) {
+          html += '<span>Auth: <span class="tag">' + esc(authType) + '</span></span>';
+        }
+        html += '</div>';
+      }
+
+      var links = [];
+      if (info.repository) {
+        links.push('<a href="' + esc(info.repository) + '">Repository</a>');
+      }
+      if (info.serverUrl) {
+        links.push('<a href="' + esc(info.serverUrl) + '">Server URL</a>');
+      }
+      if (info.license) {
+        links.push('<span>License: ' + esc(info.license) + '</span>');
+      }
+      if (links.length > 0) {
+        html += '<div class="meta-links">' + links.join("") + '</div>';
+      }
+
+      html += '</div>';
+      return html;
+    }
+
+    function renderTabs(toolCount, resourceCount, promptCount) {
+      return '<div class="section-tabs">' +
+        '<div class="section-tab active" data-section="tools-section">Tools <span class="count">(' + toolCount + ')</span></div>' +
+        '<div class="section-tab" data-section="resources-section">Resources <span class="count">(' + resourceCount + ')</span></div>' +
+        '<div class="section-tab" data-section="prompts-section">Prompts <span class="count">(' + promptCount + ')</span></div>' +
+        '</div>';
+    }
+
+    function renderBadges(annotations) {
+      if (!annotations) return '<div class="badges"></div>';
+      var html = '<div class="badges">';
+      if (annotations.readOnlyHint) html += '<span class="badge badge-readonly">readOnly</span>';
+      if (annotations.destructiveHint) html += '<span class="badge badge-destructive">destructive</span>';
+      if (annotations.idempotentHint) html += '<span class="badge badge-idempotent">idempotent</span>';
+      if (annotations.openWorldHint) html += '<span class="badge badge-openworld">openWorld</span>';
+      html += '</div>';
+      return html;
+    }
+
+    function renderParams(schema) {
+      var props = schema.properties || {};
+      var required = schema.required || [];
+      var keys = Object.keys(props);
+      if (keys.length === 0) return '';
+
+      var html = '<div class="params-section"><h4>Parameters</h4>';
+      for (var i = 0; i < keys.length; i++) {
+        var name = keys[i];
+        var p = props[name];
+        var isRequired = required.indexOf(name) !== -1;
+        html += '<div class="param-row">';
+        html += '<div class="param-name">' + esc(name);
+        if (isRequired) html += ' <span class="param-required">required</span>';
+        html += '</div>';
+        html += '<div class="param-type">' + esc(p.type || "any") + '</div>';
+        html += '<div class="param-desc">' + esc(p.description || "");
+        if (p["default"] !== undefined) {
+          html += ' <span class="param-constraint">default: ' + esc(String(p["default"])) + '</span>';
+        }
+        if (p.maximum !== undefined) {
+          html += ' <span class="param-constraint">max: ' + p.maximum + '</span>';
+        }
+        if (p.minimum !== undefined) {
+          html += ' <span class="param-constraint">min: ' + p.minimum + '</span>';
+        }
+        if (p["enum"]) {
+          html += ' <span class="param-constraint">enum: ' + esc(p["enum"].join(" | ")) + '</span>';
+        }
+        html += '</div></div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderOutputSchema(schema) {
+      var json = JSON.stringify(schema, null, 2);
+      return '<div class="output-schema-section">' +
+        '<div class="params-section"><h4>Response Schema</h4></div>' +
+        '<div class="example-code"><pre>' + esc(json) + '</pre></div>' +
+        '</div>';
+    }
+
+    function renderExamples(examples) {
+      if (!examples || examples.length === 0) return '';
+      var html = '<div class="example-section"><div class="params-section"><h4>Examples</h4></div>';
+      for (var i = 0; i < examples.length; i++) {
+        var ex = examples[i];
+        var json = JSON.stringify(ex.input, null, 2);
+        var escapedJson = json.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n");
+        html += '<div class="example-title">' + esc(ex.title) + '</div>';
+        if (ex.description) {
+          html += '<div class="example-desc">' + esc(ex.description) + '</div>';
+        }
+        html += '<div class="example-code">';
+        html += '<pre>' + esc(json) + '</pre>';
+        html += '<button class="copy-btn" onclick="copyToClipboard(\'' + escapedJson + '\', this)">copy</button>';
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderToolCard(tool) {
+      var html = '<div class="tool-card">';
+      html += '<div class="tool-card-header" onclick="toggleTool(this)">';
+      html += '<div class="tool-card-left">';
+      html += '<span class="tool-name">' + esc(tool.name) + '</span>';
+      if (tool.title) {
+        html += '<span class="tool-title">' + esc(tool.title) + '</span>';
+      }
+      html += '</div>';
+      html += renderBadges(tool.annotations);
+      html += '</div>';
+
+      html += '<div class="tool-detail">';
+      if (tool.description) {
+        html += '<div class="tool-description">' + esc(tool.description) + '</div>';
+      }
+      if (tool.inputSchema && tool.inputSchema.properties) {
+        html += renderParams(tool.inputSchema);
+      }
+      if (tool.outputSchema) {
+        html += renderOutputSchema(tool.outputSchema);
+      }
+      if (tool.examples && tool.examples.length > 0) {
+        html += renderExamples(tool.examples);
+      }
+      html += '</div></div>';
+      return html;
+    }
+
+    function renderToolsSection(tools) {
+      if (!tools || tools.length === 0) {
+        return '<div id="tools-section" class="section-content active">' +
+          '<div class="empty-state">No tools registered.</div></div>';
+      }
+
+      var groups = groupTools(tools);
+      var groupNames = Object.keys(groups);
+      var html = '<div id="tools-section" class="section-content active">';
+
+      for (var g = 0; g < groupNames.length; g++) {
+        var groupName = groupNames[g];
+        var groupToolList = groups[groupName];
+        var toolWord = groupToolList.length === 1 ? "tool" : "tools";
+
+        html += '<div class="tool-group">';
+        html += '<div class="tool-group-header open" onclick="toggleGroup(this)">';
+        html += '<span class="chevron">&#9656;</span> ' + esc(groupName);
+        html += '<span class="group-count">' + groupToolList.length + ' ' + toolWord + '</span>';
+        html += '</div>';
+        html += '<div class="tool-group-body open">';
+        for (var t = 0; t < groupToolList.length; t++) {
+          html += renderToolCard(groupToolList[t]);
+        }
+        html += '</div></div>';
+      }
+
+      html += '</div>';
+      return html;
+    }
+
+    function renderResourcesSection(resources) {
+      var html = '<div id="resources-section" class="section-content">';
+      if (!resources || resources.length === 0) {
+        return html + '<div class="empty-state">No resources registered.</div></div>';
+      }
+      for (var i = 0; i < resources.length; i++) {
+        var r = resources[i];
+        html += '<div class="resource-card">';
+        html += '<div class="resource-uri">' + esc(r.uri) + '</div>';
+        if (r.name) {
+          html += '<div class="resource-name">' + esc(r.name);
+          if (r.mimeType) {
+            html += '<span class="resource-mime">' + esc(r.mimeType) + '</span>';
+          }
+          html += '</div>';
+        }
+        if (r.description) {
+          html += '<div class="resource-desc">' + esc(r.description) + '</div>';
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPromptArgs(args) {
+      if (!args || args.length === 0) return '';
+      var html = '<div class="params-section" style="margin-top:8px"><h4>Arguments</h4>';
+      for (var i = 0; i < args.length; i++) {
+        var arg = args[i];
+        html += '<div class="param-row">';
+        html += '<div class="param-name">' + esc(arg.name);
+        if (arg.required) html += ' <span class="param-required">required</span>';
+        html += '</div>';
+        html += '<div class="param-type">string</div>';
+        html += '<div class="param-desc">' + esc(arg.description || "") + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPromptsSection(prompts) {
+      var html = '<div id="prompts-section" class="section-content">';
+      if (!prompts || prompts.length === 0) {
+        return html + '<div class="empty-state">No prompts registered.</div></div>';
+      }
+      for (var i = 0; i < prompts.length; i++) {
+        var p = prompts[i];
+        html += '<div class="prompt-card">';
+        html += '<div class="prompt-name">' + esc(p.name) + '</div>';
+        if (p.description) {
+          html += '<div class="prompt-desc">' + esc(p.description) + '</div>';
+        }
+        if (p.arguments && p.arguments.length > 0) {
+          html += renderPromptArgs(p.arguments);
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderFooter(spec) {
+      var now = new Date().toISOString().split("T")[0];
+      var html = '<div class="footer">';
+      html += '<span>Powered by <a href="https://mcpspec.dev">mcpspec</a> v' + esc(spec.mcpspec || "0.1.0") + '</span>';
+      html += '<span>Generated ' + now + '</span>';
+      html += '</div>';
+      return html;
+    }
+
+    function render() {
+      var app = document.getElementById("app");
+      if (!spec) {
+        app.innerHTML = '<div class="empty-state">No spec data available.</div>';
+        return;
+      }
+
+      var tools = spec.tools || [];
+      var resources = spec.resources || [];
+      var prompts = spec.prompts || [];
+
+      app.innerHTML =
+        renderHeader(spec) +
+        renderTabs(tools.length, resources.length, prompts.length) +
+        renderToolsSection(tools) +
+        renderResourcesSection(resources) +
+        renderPromptsSection(prompts) +
+        renderFooter(spec);
+    }
+
+    render();
+  </script>
+</body>
+</html>
