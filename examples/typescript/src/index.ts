@@ -1,6 +1,11 @@
+import http from "node:http";
+import crypto from "node:crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { OAuthTokenVerifier } from "@modelcontextprotocol/sdk/server/auth/provider.js";
+import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
+import { InvalidTokenError } from "@modelcontextprotocol/sdk/server/auth/errors.js";
 import { z } from "zod";
-import { mcpspec } from "mcpspec";
+import { createHandler } from "mcpspec";
 
 // ---------------------------------------------------------------------------
 // In-memory task store
@@ -271,10 +276,42 @@ server.registerPrompt(
 );
 
 // ---------------------------------------------------------------------------
-// mcpspec wrapper — one line to get docs + spec endpoints
+// Bearer token auth (protects /mcp only — docs and spec stay public)
 // ---------------------------------------------------------------------------
 
-const app = mcpspec(server, {
+const API_TOKEN = process.env.API_TOKEN ?? "mcpspec-demo-token";
+
+function timingSafeEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+const tokenVerifier: OAuthTokenVerifier = {
+  async verifyAccessToken(token: string): Promise<AuthInfo> {
+    if (!timingSafeEqual(token, API_TOKEN)) {
+      throw new InvalidTokenError("Invalid access token");
+    }
+    return {
+      token,
+      clientId: "demo-client",
+      scopes: ["mcp:access"],
+    };
+  },
+};
+
+function extractBearerToken(req: http.IncomingMessage): string | null {
+  const header = req.headers.authorization;
+  if (!header?.startsWith("Bearer ")) return null;
+  return header.slice(7);
+}
+
+// ---------------------------------------------------------------------------
+// mcpspec handler — composable with auth middleware
+// ---------------------------------------------------------------------------
+
+const handler = createHandler(server, {
   info: {
     title: "Task Manager",
     description:
@@ -336,6 +373,38 @@ const app = mcpspec(server, {
 });
 
 // ---------------------------------------------------------------------------
+// HTTP server with auth middleware
+// ---------------------------------------------------------------------------
+
+const app = http.createServer(async (req, res) => {
+  // Protect /mcp with bearer token auth
+  if (req.url === "/mcp") {
+    const token = extractBearerToken(req);
+    if (!token) {
+      res.writeHead(401, {
+        "www-authenticate": 'Bearer realm="mcp"',
+        "content-type": "application/json",
+      });
+      res.end(JSON.stringify({ error: "Bearer token required" }));
+      return;
+    }
+    try {
+      await tokenVerifier.verifyAccessToken(token);
+    } catch {
+      res.writeHead(401, {
+        "www-authenticate": 'Bearer error="invalid_token"',
+        "content-type": "application/json",
+      });
+      res.end(JSON.stringify({ error: "Invalid access token" }));
+      return;
+    }
+  }
+
+  // All other routes (docs, spec) are public
+  handler(req, res);
+});
+
+// ---------------------------------------------------------------------------
 // Start server
 // ---------------------------------------------------------------------------
 
@@ -343,7 +412,9 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.listen(PORT, () => {
   console.log(`Task Manager MCP server running at http://localhost:${PORT}`);
-  console.log(`  Docs:  http://localhost:${PORT}/docs`);
-  console.log(`  Spec:  http://localhost:${PORT}/mcpspec.yaml`);
-  console.log(`  MCP:   http://localhost:${PORT}/mcp`);
+  console.log(`  Docs:  http://localhost:${PORT}/docs          (public)`);
+  console.log(`  Spec:  http://localhost:${PORT}/mcpspec.yaml   (public)`);
+  console.log(`  MCP:   http://localhost:${PORT}/mcp            (bearer auth)`);
+  console.log();
+  console.log(`  Auth:  Authorization: Bearer ${API_TOKEN}`);
 });
