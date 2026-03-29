@@ -38,10 +38,13 @@ info:
 transport:
   - type: streamable-http
     url: https://tasks.example.com/mcp
+    description: Primary HTTP endpoint for remote clients
     auth:
       type: bearer
+      description: Use your API key from the dashboard
   - type: stdio
     command: npx @example/task-manager
+    description: Local transport for CLI and desktop clients
 
 # --- Server capabilities (auto-generated from MCP protocol) ---
 capabilities:
@@ -148,10 +151,12 @@ Documents how clients connect. Purely informational.
 | `type` | `"streamable-http"` or `"stdio"` | Transport type |
 | `url` | string | Server URL (for streamable-http) |
 | `command` | string | CLI command (for stdio) |
-| `auth` | object | Auth requirements |
+| `description` | string | Human-readable description of this transport |
+| `auth` | object | Auth requirements (per-transport) |
 | `auth.type` | `"oauth2"`, `"bearer"`, `"api-key"`, `"none"` | Auth mechanism |
 | `auth.tokenUrl` | string | OAuth2 token endpoint |
 | `auth.scopes` | string[] | OAuth2 scopes |
+| `auth.description` | string | Human-readable description of auth requirements |
 
 ### `capabilities` (auto-generated)
 

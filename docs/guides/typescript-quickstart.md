@@ -76,13 +76,53 @@ curl http://localhost:3000/mcpspec.yaml
 
 You'll get a YAML file describing your server's capabilities in a standardized format.
 
+## Advanced: Composable handler with auth
+
+If your MCP server uses authentication, use `createHandler()` instead of `mcpspec()`. This returns a raw request handler you can wrap with middleware:
+
+```typescript
+import http from "node:http";
+import { createHandler } from "mcpspec";
+
+const handler = createHandler(server, {
+  info: { title: "My Server", version: "1.0.0" },
+  transport: [
+    {
+      type: "streamable-http",
+      url: "/mcp",
+      auth: {
+        type: "bearer",
+        description: "API token required",
+      },
+    },
+  ],
+});
+
+const app = http.createServer(async (req, res) => {
+  // Protect /mcp with auth — docs and spec stay public
+  if (new URL(req.url ?? "/", "http://localhost").pathname === "/mcp") {
+    if (req.headers.authorization !== `Bearer ${process.env.API_TOKEN}`) {
+      res.writeHead(401, { "www-authenticate": "Bearer" });
+      res.end(JSON.stringify({ error: "Unauthorized" }));
+      return;
+    }
+  }
+  await handler(req, res);
+});
+
+app.listen(3000);
+```
+
+This keeps `/docs` and `/mcpspec.yaml` publicly accessible (like Swagger UI) while protecting the actual MCP protocol endpoint.
+
 ## What's Next?
 
 - **Add groups** to organize tools: see [Configuration Guide](./configuration.md)
 - **Add examples** to tools: see [Configuration Guide](./configuration.md)
+- **Add transport/auth metadata**: see [Configuration Guide](./configuration.md)
 - **Control visibility** with exclude/include: see [Security Guide](./security.md)
 - **Understand the spec format**: see [Spec Format Reference](./spec-format.md)
 
 ## Full Example
 
-See the [Task Manager example](../../examples/typescript/src/index.ts) for a complete server with groups, examples, resources, and prompts.
+See the [Task Manager example](../../examples/typescript/src/index.ts) for a complete server with groups, examples, bearer auth, multiple transport types, resources, and prompts.

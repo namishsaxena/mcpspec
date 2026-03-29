@@ -1,10 +1,20 @@
 # Configuration Guide
 
-All configuration is passed as the second argument to `mcpspec()`.
+All configuration is passed as the second argument to `mcpspec()` or `createHandler()`.
 
 ```typescript
+// Simple — returns an http.Server directly
 const app = mcpspec(server, options);
+
+// Composable — returns a request handler you can wrap with middleware
+const handler = createHandler(server, options);
+const app = http.createServer((req, res) => {
+  // Add auth, CORS, logging, etc. here
+  handler(req, res);
+});
 ```
+
+Use `createHandler()` when you need middleware (auth, logging, CORS). Use `mcpspec()` for simple servers with no middleware needs.
 
 ## Required: `info`
 
@@ -28,7 +38,9 @@ The only required field. Provides metadata about your server.
 
 ## Optional: `transport`
 
-Document how clients connect to your server. This is purely informational — mcpspec does not configure transport behavior.
+Document how clients connect to your server. This is purely informational — mcpspec does not configure or enforce transport behavior, it just documents it in the spec and docs UI.
+
+A server can expose multiple transports. Each transport has its own auth requirements (or none). This is why auth is nested inside transport — a stdio transport has no auth, while an HTTP transport might require a bearer token.
 
 ```typescript
 {
@@ -36,15 +48,16 @@ Document how clients connect to your server. This is purely informational — mc
     {
       type: "streamable-http",
       url: "https://my-server.com/mcp",
+      description: "Primary HTTP endpoint for remote clients",
       auth: {
-        type: "oauth2",
-        tokenUrl: "https://my-server.com/oauth/token",
-        scopes: ["read", "write"],
+        type: "bearer",
+        description: "Use your API key from the dashboard",
       },
     },
     {
       type: "stdio",
       command: "npx @my-org/my-server",
+      description: "Local transport for CLI and desktop clients",
     },
   ],
 }
@@ -54,17 +67,19 @@ Document how clients connect to your server. This is purely informational — mc
 
 | Type | Fields |
 |------|--------|
-| `streamable-http` | `url` (required), `auth` (optional) |
-| `stdio` | `command` (required) |
+| `streamable-http` | `url`, `description`, `auth` |
+| `stdio` | `command`, `description` |
 
 ### Auth types
 
+Auth is per-transport. A `stdio` transport typically has no auth (local process), while `streamable-http` usually does.
+
 | Type | Fields |
 |------|--------|
-| `oauth2` | `tokenUrl`, `scopes` |
-| `bearer` | (no additional fields) |
-| `api-key` | (no additional fields) |
-| `none` | (explicit no-auth) |
+| `oauth2` | `tokenUrl`, `scopes`, `description` |
+| `bearer` | `description` |
+| `api-key` | `description` |
+| `none` | `description` (explicit no-auth) |
 
 ## Optional: `basePath`
 
@@ -178,7 +193,7 @@ Override auto-generated metadata for specific tools, resources, or prompts. Usef
 | Resources | `description` |
 | Prompts | `description` |
 
-## Full Example
+## Full Example (simple — no auth)
 
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -194,16 +209,19 @@ const app = mcpspec(server, {
     description: "Does useful things with data",
     repository: "https://github.com/me/my-server",
     license: "MIT",
-    authors: [{ name: "Me" }],
   },
   transport: [
     {
       type: "streamable-http",
-      url: "https://my-server.com/mcp",
-      auth: { type: "bearer" },
+      url: "/mcp",
+      description: "HTTP endpoint",
+    },
+    {
+      type: "stdio",
+      command: "npx @my-org/my-server",
+      description: "Local CLI transport",
     },
   ],
-  basePath: "/spec",
   exclude: ["internal_*"],
   groups: {
     Data: ["get_users", "list_items"],
@@ -214,14 +232,63 @@ const app = mcpspec(server, {
       { title: "Fetch 10 users", input: { limit: 10 } },
     ],
   },
-  overrides: {
-    tools: {
-      reset_cache: { description: "Clears the application cache" },
+});
+
+app.listen(3000);
+```
+
+## Full Example (with auth)
+
+Use `createHandler()` to wrap the handler with auth middleware. `/docs` and `/mcpspec.yaml` stay public, `/mcp` requires auth — same pattern as OpenAPI/Swagger UI.
+
+```typescript
+import http from "node:http";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { createHandler } from "mcpspec";
+
+const server = new McpServer({ name: "my-server", version: "1.0.0" });
+// ... register tools ...
+
+const handler = createHandler(server, {
+  info: {
+    title: "My MCP Server",
+    version: "1.0.0",
+    description: "Does useful things with data",
+  },
+  transport: [
+    {
+      type: "streamable-http",
+      url: "/mcp",
+      description: "HTTP endpoint with bearer auth",
+      auth: {
+        type: "bearer",
+        description: "Use your API key from the dashboard",
+      },
     },
+    {
+      type: "stdio",
+      command: "npx @my-org/my-server",
+      description: "Local transport — no auth needed",
+    },
+  ],
+  groups: {
+    Data: ["get_users", "list_items"],
   },
 });
 
-app.listen(3000, () => {
-  console.log("http://localhost:3000/spec/docs");
+const app = http.createServer(async (req, res) => {
+  const pathname = new URL(req.url ?? "/", "http://localhost").pathname;
+  if (pathname === "/mcp") {
+    const auth = req.headers.authorization;
+    if (!auth?.startsWith("Bearer ")) {
+      res.writeHead(401, { "www-authenticate": "Bearer" });
+      res.end(JSON.stringify({ error: "Bearer token required" }));
+      return;
+    }
+    // Validate token here...
+  }
+  await handler(req, res);
 });
+
+app.listen(3000);
 ```
