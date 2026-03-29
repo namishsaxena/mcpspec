@@ -19,6 +19,17 @@ const handler = createHandler(server, {
     license: "MIT",
     authors: [{ name: "Namish Saxena", url: "https://mcpspec.dev" }],
   },
+  transport: [
+    {
+      type: "streamable-http",
+      url: "/mcp",
+      description: "Streamable HTTP endpoint with bearer token auth",
+      auth: {
+        type: "bearer",
+        description: "Set API_TOKEN env var or use the default demo token",
+      },
+    },
+  ],
   groups: {
     Tasks: [
       "create_task",
