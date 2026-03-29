@@ -2,7 +2,7 @@ import http from "node:http";
 import { describe, it, expect, afterEach } from "vitest";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { mcpspec } from "../src/mcpspec.js";
+import { mcpspec, createHandler } from "../src/mcpspec.js";
 
 function makeRequest(
   server: http.Server,
@@ -404,5 +404,111 @@ describe("mcpspec", () => {
 
     const response = await makeRequest(app, "/nonexistent");
     expect(response.status).toBe(404);
+  });
+});
+
+describe("createHandler", () => {
+  const instances: http.Server[] = [];
+
+  afterEach(async () => {
+    for (const server of instances) {
+      await closeServer(server);
+    }
+    instances.length = 0;
+  });
+
+  it("returns a request handler function", () => {
+    const server = new McpServer({
+      name: "handler-test",
+      version: "1.0.0",
+    });
+
+    const handler = createHandler(server, {
+      info: { title: "Handler Test", version: "1.0.0" },
+    });
+
+    expect(typeof handler).toBe("function");
+  });
+
+  it("serves /docs and /mcpspec.yaml when composed with http.createServer", async () => {
+    const server = new McpServer({
+      name: "compose-test",
+      version: "1.0.0",
+    });
+
+    server.tool(
+      "hello",
+      "Say hello",
+      { name: z.string() },
+      async ({ name }) => ({
+        content: [{ type: "text", text: `Hello, ${name}!` }],
+      }),
+    );
+
+    const handler = createHandler(server, {
+      info: { title: "Compose Test", version: "1.0.0" },
+    });
+
+    const app = http.createServer(handler);
+    instances.push(app);
+    await listenServer(app);
+
+    const docsResponse = await makeRequest(app, "/docs");
+    expect(docsResponse.status).toBe(200);
+    expect(docsResponse.headers["content-type"]).toContain("text/html");
+    expect(docsResponse.body).toContain("Compose Test");
+    expect(docsResponse.body).toContain("hello");
+
+    const yamlResponse = await makeRequest(app, "/mcpspec.yaml");
+    expect(yamlResponse.status).toBe(200);
+    expect(yamlResponse.headers["content-type"]).toContain("text/yaml");
+    expect(yamlResponse.body).toContain("hello");
+  });
+
+  it("can be wrapped with auth middleware that blocks /mcp", async () => {
+    const server = new McpServer({
+      name: "auth-compose-test",
+      version: "1.0.0",
+    });
+
+    server.tool("ping", "Ping", {}, async () => ({
+      content: [{ type: "text", text: "pong" }],
+    }));
+
+    const handler = createHandler(server, {
+      info: { title: "Auth Compose", version: "1.0.0" },
+    });
+
+    const app = http.createServer((req, res) => {
+      if (req.url === "/mcp" && req.headers.authorization !== "Bearer test-token") {
+        res.writeHead(401, { "www-authenticate": "Bearer" });
+        res.end("Unauthorized");
+        return;
+      }
+      handler(req, res);
+    });
+    instances.push(app);
+    await listenServer(app);
+
+    // /docs should be public
+    const docsResponse = await makeRequest(app, "/docs");
+    expect(docsResponse.status).toBe(200);
+
+    // /mcp without token should be 401
+    const mcpNoAuth = await postRequest(app, "/mcp", {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "initialize",
+      params: {
+        protocolVersion: "2025-03-26",
+        capabilities: {},
+        clientInfo: { name: "test", version: "1.0.0" },
+      },
+    });
+    expect(mcpNoAuth.status).toBe(401);
+
+    // /mcpspec.yaml should be public
+    const yamlResponse = await makeRequest(app, "/mcpspec.yaml");
+    expect(yamlResponse.status).toBe(200);
   });
 });

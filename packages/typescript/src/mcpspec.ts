@@ -6,19 +6,25 @@ import { generateSpec } from "./generate.js";
 import { handleRequest } from "./serve.js";
 import type { McpSpec, McpSpecOptions } from "./types.js";
 
+export type McpSpecRequestHandler = (
+  req: http.IncomingMessage,
+  res: http.ServerResponse,
+) => void | Promise<void>;
+
 /**
- * Create an http.Server that serves:
+ * Create a request handler that serves:
  *   - /docs          — human-readable HTML docs
  *   - /mcpspec.yaml  — machine-readable spec
  *   - /mcp           — MCP streamable-http endpoint
  *
+ * Compose with http.createServer() or wrap with middleware.
  * Introspection is performed lazily on the first request
  * and cached for all subsequent requests.
  */
-export function mcpspec(
+export function createHandler(
   server: McpServer,
   options: McpSpecOptions,
-): http.Server {
+): McpSpecRequestHandler {
   let cachedSpec: McpSpec | null = null;
   let introspectionPromise: Promise<void> | null = null;
 
@@ -35,25 +41,32 @@ export function mcpspec(
 
   const basePath = (options.basePath ?? "").replace(/\/$/, "");
 
-  const httpServer = http.createServer(
-    async (req: http.IncomingMessage, res: http.ServerResponse) => {
-      const url = req.url ?? "/";
+  return async (req: http.IncomingMessage, res: http.ServerResponse) => {
+    const url = req.url ?? "/";
 
-      if (url === `${basePath}/mcp`) {
-        await handleMcpRoute(req, res, server);
-        return;
-      }
+    if (url === `${basePath}/mcp`) {
+      await handleMcpRoute(req, res, server);
+      return;
+    }
 
-      await ensureSpec();
+    await ensureSpec();
 
-      handleRequest(req, res, {
-        getSpec: () => cachedSpec,
-        basePath,
-      });
-    },
-  );
+    handleRequest(req, res, {
+      getSpec: () => cachedSpec,
+      basePath,
+    });
+  };
+}
 
-  return httpServer;
+/**
+ * Create an http.Server that serves /docs, /mcpspec.yaml, and /mcp.
+ * Convenience wrapper around createHandler().
+ */
+export function mcpspec(
+  server: McpServer,
+  options: McpSpecOptions,
+): http.Server {
+  return http.createServer(createHandler(server, options));
 }
 
 async function handleMcpRoute(

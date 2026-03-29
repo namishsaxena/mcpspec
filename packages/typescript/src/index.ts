@@ -1,6 +1,7 @@
 // mcpspec — OpenAPI-like specs for MCP servers
 
-export { mcpspec } from "./mcpspec.js";
+export { mcpspec, createHandler } from "./mcpspec.js";
+export type { McpSpecRequestHandler } from "./mcpspec.js";
 export { introspect } from "./introspect.js";
 export type {
   IntrospectionResult,
