@@ -282,10 +282,9 @@ server.registerPrompt(
 const API_TOKEN = process.env.API_TOKEN ?? "mcpspec-demo-token";
 
 function timingSafeEqual(a: string, b: string): boolean {
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  if (bufA.length !== bufB.length) return false;
-  return crypto.timingSafeEqual(bufA, bufB);
+  const hmacA = crypto.createHmac("sha256", API_TOKEN).update(a).digest();
+  const hmacB = crypto.createHmac("sha256", API_TOKEN).update(b).digest();
+  return crypto.timingSafeEqual(hmacA, hmacB);
 }
 
 const tokenVerifier: OAuthTokenVerifier = {
@@ -378,7 +377,8 @@ const handler = createHandler(server, {
 
 const app = http.createServer(async (req, res) => {
   // Protect /mcp with bearer token auth
-  if (req.url === "/mcp") {
+  const pathname = new URL(req.url ?? "/", `http://${req.headers.host}`).pathname;
+  if (pathname === "/mcp") {
     const token = extractBearerToken(req);
     if (!token) {
       res.writeHead(401, {
@@ -401,7 +401,7 @@ const app = http.createServer(async (req, res) => {
   }
 
   // All other routes (docs, spec) are public
-  handler(req, res);
+  await handler(req, res);
 });
 
 // ---------------------------------------------------------------------------
@@ -416,5 +416,9 @@ app.listen(PORT, () => {
   console.log(`  Spec:  http://localhost:${PORT}/mcpspec.yaml   (public)`);
   console.log(`  MCP:   http://localhost:${PORT}/mcp            (bearer auth)`);
   console.log();
-  console.log(`  Auth:  Authorization: Bearer ${API_TOKEN}`);
+  if (API_TOKEN === "mcpspec-demo-token") {
+    console.log(`  Auth:  Authorization: Bearer ${API_TOKEN}`);
+  } else {
+    console.log(`  Auth:  Authorization: Bearer <redacted>`);
+  }
 });
