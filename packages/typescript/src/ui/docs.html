@@ -139,10 +139,17 @@ body {
 
 .transport-info {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 6px;
   margin-top: 8px;
   font-size: 13px;
   color: var(--text-secondary);
+}
+.transport-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .transport-info .tag {
   background: var(--bg-tertiary);
@@ -701,16 +708,15 @@ document.addEventListener("DOMContentLoaded", function () {
         html += '<div class="transport-info">';
         for (var i = 0; i < transports.length; i++) {
           var tr = transports[i];
+          html += '<div class="transport-row">';
           html += '<span class="tag">' + esc(tr.type) + '</span>';
+          if (tr.auth && tr.auth.type) {
+            html += '<span class="tag">' + esc(tr.auth.type) + ' auth</span>';
+          }
           if (tr.description) {
             html += '<span>' + esc(tr.description) + '</span>';
           }
-          if (tr.auth && tr.auth.type) {
-            html += '<span class="tag">' + esc(tr.auth.type) + ' auth</span>';
-            if (tr.auth.description) {
-              html += '<span>' + esc(tr.auth.description) + '</span>';
-            }
-          }
+          html += '</div>';
         }
         html += '</div>';
       }
