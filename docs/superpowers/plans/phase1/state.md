@@ -14,14 +14,14 @@
 | 07 | Docs UI | completed | 5 | 5 files + post-plan polish: 3 themes (dark/light/contrast), SVG icons, a11y (ARIA, keyboard nav, focus-visible, skip-link), copy button fix, 29KB built |
 | 08 | HTTP Serving | completed | 6 | serve.ts (8 tests), mcpspec.ts (11 tests), /docs + /mcpspec.yaml + /mcp routes, lazy introspection with caching |
 | 09 | Example Server | completed | 7 | Task Manager demo, all endpoints verified, fixed tsconfig types + lib build copy |
-| 10 | Documentation | ready | — | Updated: raw http references |
-| 11 | Integration Verification | ready | — | No changes needed |
+| 10 | Documentation | completed | 7 | README (120 LOC), 4 guides, fixed API examples (listen signature, registerTool) |
+| 11 | Integration Verification | completed | 7 | 15/15 structural checks pass, schema validation pass, all quality gates pass, 82 tests |
 
 ## Current Session
 
-- **Session:** 7 (2026-03-29)
-- **Phase:** Implementation in progress. Sub-Plans 00-09 done.
-- **Completed this session:** SP09 (Example Server)
+- **Session:** 8 (2026-03-29)
+- **Phase:** Phase 1 complete. Post-Phase 1 hardening and auth example.
+- **Completed this session:** Auth example, createHandler API, security hardening, transport/auth metadata, docs updates
 
 ## Decisions & Deviations
 
@@ -43,15 +43,27 @@
 - [2026-03-29] Library build script needs `cp -r src/ui dist/ui` — tsc doesn't copy non-TS files, docs.html was falling back to bare JSON template
 - [2026-03-29] Migrated example server from deprecated `server.tool()`/`.resource()`/`.prompt()` to `registerTool`/`registerResource`/`registerPrompt` — MCP SDK v1.28.0 deprecates old API
 - [2026-03-29] Added tool annotations to example server — demonstrates readOnly, idempotent, destructive, openWorld badges in docs UI
+- [2026-03-29] Added `createHandler()` API — composable request handler for middleware support (auth, CORS, logging). `mcpspec()` is now a thin wrapper.
+- [2026-03-29] Added bearer token auth to example using MCP SDK's `OAuthTokenVerifier` interface, `AuthInfo` type, and `InvalidTokenError`. `/docs` and `/mcpspec.yaml` stay public, `/mcp` requires auth (OpenAPI/Swagger UI pattern).
+- [2026-03-29] Security hardening: XSS prevention in docs HTML (title escaping, JSON payload `</` escaping), URL scheme validation (reject `javascript:` links), escaped `p.maximum`/`p.minimum` in params, HMAC-based timing-safe token comparison.
+- [2026-03-29] Error recovery: `ensureSpec()` resets `introspectionPromise` on failure (retry on next request), handler has top-level try/catch (500 fallback), `handleMcpRoute` transport cleanup in `finally` block.
+- [2026-03-29] Added `description` field to `McpSpecTransport` and `McpSpecAuth` types + JSON schema.
+- [2026-03-29] Docs UI renders all transports (was only rendering `transport[0]`), including transport/auth descriptions.
+- [2026-03-29] Example split into 3 modules: `server.ts` (MCP server + tools), `auth.ts` (token verification), `index.ts` (wiring + startup) — all under 300 LOC limit.
+- [2026-03-29] Example demonstrates multiple transport types: `streamable-http` with bearer auth + `stdio` without auth.
+- [2026-03-29] MCP route matching uses `new URL().pathname` instead of raw `req.url` to handle query strings.
+- [2026-03-29] Updated all 4 guides: quickstart (createHandler + auth section), configuration (createHandler, multiple transports, description fields), security (auth pattern, threat model with /mcp), spec format (description fields in transport/auth tables).
 
 ## Future Improvements (Parked)
 
 - **Real health badge**: Currently hardcoded "healthy" in docs UI. Should reflect introspection status: healthy (all capabilities listed), degraded (partial failure), error (introspection failed). Track status in introspect.ts, pass to template via spec data.
 
+## Test Count
+
+- **87 tests** across 8 test files (up from 82 in session 7)
+- New tests: `createHandler` composability (3), transport/auth descriptions (schema, generate, integration)
+
 ## Next Session Should
 
-- Continue with Sub-Plan 10: Documentation
-- Execute sub-plans sequentially: 10 → 11
-- Read each sub-plan fully before executing
-- Update this file after completing each sub-plan
-- Manual testing checkpoint at end of each sub-plan
+- Phase 1 is complete (all 12 sub-plans done + post-phase hardening)
+- Next steps: npm publish preparation, GitHub repo setup, CI, Phase 2 (Python)
