@@ -673,9 +673,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderHeader(spec) {
       var info = spec.info || {};
-      var transport = (spec.transport || [])[0];
-      var transportType = transport ? transport.type : null;
-      var authType = transport && transport.auth ? transport.auth.type : null;
+      var transports = spec.transport || [];
 
       var html = '<div class="header">';
       html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
@@ -690,13 +688,14 @@ document.addEventListener("DOMContentLoaded", function () {
         html += '<p class="description">' + esc(info.description) + '</p>';
       }
 
-      if (transportType || authType) {
+      if (transports.length > 0) {
         html += '<div class="transport-info">';
-        if (transportType) {
-          html += '<span>Transport: <span class="tag">' + esc(transportType) + '</span></span>';
-        }
-        if (authType) {
-          html += '<span>Auth: <span class="tag">' + esc(authType) + '</span></span>';
+        for (var i = 0; i < transports.length; i++) {
+          var tr = transports[i];
+          html += '<span class="tag">' + esc(tr.type) + '</span>';
+          if (tr.auth && tr.auth.type) {
+            html += '<span class="tag">' + esc(tr.auth.type) + ' auth</span>';
+          }
         }
         html += '</div>';
       }

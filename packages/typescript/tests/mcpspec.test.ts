@@ -278,6 +278,43 @@ describe("mcpspec", () => {
     expect(response.body).not.toContain("blocked_tool");
   });
 
+  it("includes transport metadata in YAML spec output", async () => {
+    const server = new McpServer({
+      name: "transport-test",
+      version: "1.0.0",
+    });
+
+    server.tool("ping", "Ping", {}, async () => ({
+      content: [{ type: "text", text: "pong" }],
+    }));
+
+    const app = mcpspec(server, {
+      info: { title: "Transport Test", version: "1.0.0" },
+      transport: [
+        {
+          type: "streamable-http",
+          url: "/mcp",
+          description: "Primary HTTP transport",
+          auth: {
+            type: "bearer",
+            description: "Use a valid API token",
+          },
+        },
+      ],
+    });
+    instances.push(app);
+    await listenServer(app);
+
+    const response = await makeRequest(app, "/mcpspec.yaml");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toContain("transport:");
+    expect(response.body).toContain("streamable-http");
+    expect(response.body).toContain("Primary HTTP transport");
+    expect(response.body).toContain("bearer");
+    expect(response.body).toContain("Use a valid API token");
+  });
+
   it("caches spec after first request", async () => {
     const server = new McpServer({
       name: "cache-test",

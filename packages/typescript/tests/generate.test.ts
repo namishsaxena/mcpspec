@@ -182,8 +182,10 @@ describe("generateSpec", () => {
         {
           type: "streamable-http",
           url: "https://example.com/mcp",
+          description: "Primary HTTP endpoint",
           auth: {
             type: "bearer",
+            description: "Use a valid API token",
           },
         },
       ],
@@ -194,7 +196,9 @@ describe("generateSpec", () => {
     expect(spec.transport).toHaveLength(1);
     expect(spec.transport?.[0]?.type).toBe("streamable-http");
     expect(spec.transport?.[0]?.url).toBe("https://example.com/mcp");
+    expect(spec.transport?.[0]?.description).toBe("Primary HTTP endpoint");
     expect(spec.transport?.[0]?.auth?.type).toBe("bearer");
+    expect(spec.transport?.[0]?.auth?.description).toBe("Use a valid API token");
   });
 
   it("includes $schema URL", () => {
@@ -542,6 +546,11 @@ describe("serializeSpec", () => {
         {
           type: "streamable-http",
           url: "https://example.com/mcp",
+          description: "Main endpoint",
+          auth: {
+            type: "bearer",
+            description: "Requires API token",
+          },
         },
       ],
     };
@@ -551,5 +560,7 @@ describe("serializeSpec", () => {
 
     expect(yamlStr).toContain("transport:");
     expect(yamlStr).toContain("streamable-http");
+    expect(yamlStr).toContain("Main endpoint");
+    expect(yamlStr).toContain("Requires API token");
   });
 });

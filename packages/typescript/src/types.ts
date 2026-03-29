@@ -33,6 +33,7 @@ export interface McpSpecTransport {
   type: "streamable-http" | "stdio";
   url?: string;
   command?: string;
+  description?: string;
   auth?: McpSpecAuth;
 }
 
@@ -40,6 +41,7 @@ export interface McpSpecAuth {
   type: "oauth2" | "bearer" | "api-key" | "none";
   tokenUrl?: string;
   scopes?: string[];
+  description?: string;
 }
 
 export interface McpSpecTool {

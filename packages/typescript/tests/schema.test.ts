@@ -123,6 +123,25 @@ describe("mcpspec.schema.json", () => {
     expect(validate(doc)).toBe(true);
   });
 
+  it("accepts transport and auth with description fields", () => {
+    const doc = {
+      mcpspec: "0.1.0",
+      info: { name: "desc-server", version: "1.0.0" },
+      transport: [
+        {
+          type: "streamable-http",
+          url: "https://example.com/mcp",
+          description: "Primary HTTP transport",
+          auth: {
+            type: "bearer",
+            description: "Use a valid API token",
+          },
+        },
+      ],
+    };
+    expect(validate(doc)).toBe(true);
+  });
+
   // -----------------------------------------------------------------------
   // Invalid documents
   // -----------------------------------------------------------------------
