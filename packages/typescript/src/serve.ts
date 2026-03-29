@@ -17,11 +17,21 @@ function loadDocsTemplate(): string {
 
 const docsTemplate = loadDocsTemplate();
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
 function buildDocsHtml(spec: McpSpec): string {
   const title = spec.info?.title ?? spec.info?.name ?? "MCP Server";
+  const jsonPayload = JSON.stringify(spec).replace(/<\//g, "<\\/");
   return docsTemplate
-    .replace("__SPEC_DATA__", JSON.stringify(spec))
-    .replace("__TITLE__", title);
+    .replace("__SPEC_DATA__", jsonPayload)
+    .replace("__TITLE__", escapeHtml(title));
 }
 
 export interface HandleRequestOptions {
