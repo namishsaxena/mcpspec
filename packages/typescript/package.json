@@ -1,7 +1,10 @@
 {
-  "name": "mcpspec",
+  "name": "@mcpspec-dev/typescript",
   "version": "0.1.0",
   "description": "OpenAPI-like specs for MCP servers. Human-readable docs. Machine-readable discovery.",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

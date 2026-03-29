@@ -1,5 +1,5 @@
 import http from "node:http";
-import { createHandler } from "mcpspec";
+import { createHandler } from "@mcpspec-dev/typescript";
 import { server } from "./server.js";
 import { API_TOKEN, tokenVerifier, extractBearerToken } from "./auth.js";
 

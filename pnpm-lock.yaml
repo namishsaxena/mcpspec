@@ -10,12 +10,12 @@ importers:
 
   examples/typescript:
     dependencies:
+      '@mcpspec-dev/typescript':
+        specifier: workspace:*
+        version: link:../../packages/typescript
       '@modelcontextprotocol/sdk':
         specifier: ^1.28.0
         version: 1.28.0(zod@4.3.6)
-      mcpspec:
-        specifier: workspace:*
-        version: link:../../packages/typescript
       zod:
         specifier: ^4.3.6
         version: 4.3.6

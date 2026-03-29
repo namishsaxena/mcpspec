@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.28.0",
-    "mcpspec": "workspace:*",
+    "@mcpspec-dev/typescript": "workspace:*",
     "zod": "^4.3.6"
   },
   "devDependencies": {
