@@ -637,6 +637,15 @@ document.addEventListener("DOMContentLoaded", function () {
         .replace(/'/g, "&#39;");
     }
 
+    function safeUrl(url) {
+      if (typeof url !== 'string') return '';
+      var trimmed = url.trim().toLowerCase();
+      if (trimmed.indexOf('http://') === 0 || trimmed.indexOf('https://') === 0) {
+        return url;
+      }
+      return '';
+    }
+
     function iconSun() {
       return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>';
     }
@@ -693,18 +702,24 @@ document.addEventListener("DOMContentLoaded", function () {
         for (var i = 0; i < transports.length; i++) {
           var tr = transports[i];
           html += '<span class="tag">' + esc(tr.type) + '</span>';
+          if (tr.description) {
+            html += '<span>' + esc(tr.description) + '</span>';
+          }
           if (tr.auth && tr.auth.type) {
             html += '<span class="tag">' + esc(tr.auth.type) + ' auth</span>';
+            if (tr.auth.description) {
+              html += '<span>' + esc(tr.auth.description) + '</span>';
+            }
           }
         }
         html += '</div>';
       }
 
       var links = [];
-      if (info.repository) {
+      if (info.repository && safeUrl(info.repository)) {
         links.push('<a href="' + esc(info.repository) + '">Repository</a>');
       }
-      if (info.serverUrl) {
+      if (info.serverUrl && safeUrl(info.serverUrl)) {
         links.push('<a href="' + esc(info.serverUrl) + '">Server URL</a>');
       }
       if (info.license) {
@@ -758,10 +773,10 @@ document.addEventListener("DOMContentLoaded", function () {
           html += ' <span class="param-constraint">default: ' + esc(String(p["default"])) + '</span>';
         }
         if (p.maximum !== undefined) {
-          html += ' <span class="param-constraint">max: ' + p.maximum + '</span>';
+          html += ' <span class="param-constraint">max: ' + esc(String(p.maximum)) + '</span>';
         }
         if (p.minimum !== undefined) {
-          html += ' <span class="param-constraint">min: ' + p.minimum + '</span>';
+          html += ' <span class="param-constraint">min: ' + esc(String(p.minimum)) + '</span>';
         }
         if (p["enum"]) {
           html += ' <span class="param-constraint">enum: ' + esc(p["enum"].join(" | ")) + '</span>';
