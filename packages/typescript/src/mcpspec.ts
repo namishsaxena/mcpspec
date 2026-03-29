@@ -32,8 +32,13 @@ export function createHandler(
     if (cachedSpec) return;
     if (!introspectionPromise) {
       introspectionPromise = (async () => {
-        const result = await introspect(server);
-        cachedSpec = generateSpec(result, options);
+        try {
+          const result = await introspect(server);
+          cachedSpec = generateSpec(result, options);
+        } catch (error) {
+          introspectionPromise = null;
+          throw error;
+        }
       })();
     }
     return introspectionPromise;
@@ -42,19 +47,26 @@ export function createHandler(
   const basePath = (options.basePath ?? "").replace(/\/$/, "");
 
   return async (req: http.IncomingMessage, res: http.ServerResponse) => {
-    const url = req.url ?? "/";
+    try {
+      const url = req.url ?? "/";
 
-    if (url === `${basePath}/mcp`) {
-      await handleMcpRoute(req, res, server);
-      return;
+      if (url === `${basePath}/mcp`) {
+        await handleMcpRoute(req, res, server);
+        return;
+      }
+
+      await ensureSpec();
+
+      handleRequest(req, res, {
+        getSpec: () => cachedSpec,
+        basePath,
+      });
+    } catch {
+      if (!res.headersSent) {
+        res.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
+        res.end("Internal Server Error");
+      }
     }
-
-    await ensureSpec();
-
-    handleRequest(req, res, {
-      getSpec: () => cachedSpec,
-      basePath,
-    });
   };
 }
 
@@ -78,6 +90,10 @@ async function handleMcpRoute(
     sessionIdGenerator: undefined,
   });
 
-  await mcpServer.server.connect(transport);
-  await transport.handleRequest(req, res);
+  try {
+    await mcpServer.server.connect(transport);
+    await transport.handleRequest(req, res);
+  } finally {
+    await transport.close().catch(() => {});
+  }
 }
