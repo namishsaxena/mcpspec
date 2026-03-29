@@ -23,11 +23,16 @@ const handler = createHandler(server, {
     {
       type: "streamable-http",
       url: "/mcp",
-      description: "Streamable HTTP endpoint with bearer token auth",
+      description: "Primary HTTP endpoint for browser and remote clients",
       auth: {
         type: "bearer",
         description: "Set API_TOKEN env var or use the default demo token",
       },
+    },
+    {
+      type: "stdio",
+      command: "npx mcpspec-example-task-manager",
+      description: "Local stdio transport for CLI and desktop clients",
     },
   ],
   groups: {
