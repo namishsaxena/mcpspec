@@ -45,3 +45,6 @@ mcpspec-project-plan.md
 
 # custom
 docs/superpowers/
+docs/design/
+.claude/settings.local.json
+dump.txt
