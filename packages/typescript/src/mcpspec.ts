@@ -48,9 +48,10 @@ export function createHandler(
 
   return async (req: http.IncomingMessage, res: http.ServerResponse) => {
     try {
-      const url = req.url ?? "/";
+      const rawUrl = req.url ?? "/";
+      const pathname = new URL(rawUrl, "http://localhost").pathname;
 
-      if (url === `${basePath}/mcp`) {
+      if (pathname === `${basePath}/mcp`) {
         await handleMcpRoute(req, res, server);
         return;
       }
