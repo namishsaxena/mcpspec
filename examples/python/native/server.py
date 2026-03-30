@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from mcp.server.lowlevel.server import Server
+from mcp.server import Server
 from mcp.types import (
     GetPromptResult,
     Prompt,
