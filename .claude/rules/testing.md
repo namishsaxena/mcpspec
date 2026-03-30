@@ -48,3 +48,14 @@ description: Testing standards and TDD practices
 - Good: `"filters tools matching exclude patterns"`
 - Good: `"returns empty spec when server has no capabilities"`
 - Bad: `"test filter"`, `"it works"`, `"test1"`
+
+## Python-Specific
+
+- Use pytest with `asyncio_mode = "auto"` for async tests
+- Use `@pytest.mark.asyncio` for async test functions
+- Use Starlette's `TestClient` for HTTP testing (no real server needed)
+- Use `create_connected_server_and_client_session` for MCP introspection tests
+- Arrange-Act-Assert pattern applies to Python tests too
+- Coverage threshold: 90% (`--cov-fail-under=90`)
+- Test file naming: `test_<module>.py` (not `<module>_test.py`)
+- Run single test file: `cd packages/python && uv run pytest tests/test_<file>.py`

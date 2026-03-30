@@ -10,21 +10,35 @@
       "WebFetch(domain:modelcontextprotocol.github.io)",
       "WebFetch(domain:py.sdk.modelcontextprotocol.io)",
       "WebFetch(domain:registry.npmjs.org)",
-      "WebFetch(domain:pypi.org)"
+      "WebFetch(domain:pypi.org)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm vitest:*)",
+      "Bash(node -e \"import\\(''@modelcontextprotocol/sdk/server/auth/provider.js''\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\)\")",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm:*)",
+      "WebFetch(domain:docs.astral.sh)",
+      "Bash(uv:*)",
+      "Bash(uv run:*)",
+      "Bash(python3 -c \"import json; json.load\\(open\\(''.claude/settings.local.json''\\)\\)\")"
     ],
     "deny": [
       "Edit(file_path:.env)",
       "Write(file_path:.env)",
-      "Edit(file_path:*.pem)",
-      "Write(file_path:*.pem)",
-      "Edit(file_path:*.key)",
-      "Write(file_path:*.key)",
-      "Edit(file_path:*credentials*)",
-      "Write(file_path:*credentials*)",
       "Edit(file_path:secrets/*)",
       "Write(file_path:secrets/*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github"
+  ],
+  "disabledMcpjsonServers": [
+    "github"
+  ],
   "hooks": {
     "PreToolUse": [
       {
