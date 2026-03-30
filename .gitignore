@@ -47,6 +47,7 @@ mcpspec-project-plan.md
 
 # Generated build artifacts
 packages/typescript/src/ui/
+packages/python/src/mcpspec_dev/ui/
 
 # MCP config (contains tokens)
 .mcp.json
