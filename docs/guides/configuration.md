@@ -1,5 +1,7 @@
 # Configuration Guide
 
+## TypeScript
+
 All configuration is passed as the second argument to `mcpspec()` or `createHandler()`.
 
 ```typescript
@@ -15,6 +17,23 @@ const app = http.createServer((req, res) => {
 ```
 
 Use `createHandler()` when you need middleware (auth, logging, CORS). Use `mcpspec()` for simple servers with no middleware needs.
+
+## Python
+
+All configuration is passed as keyword arguments to the `McpSpec` constructor.
+
+```python
+from mcpspec import McpSpec
+
+# FastMCP — routes injected automatically via custom_route()
+spec = McpSpec(mcp, info={"title": "My Server", "version": "1.0.0"})
+
+# Server API — use create_app() for a standalone Starlette ASGI app
+spec = McpSpec(server, info={"title": "My Server", "version": "1.0.0"})
+app = spec.create_app()
+```
+
+Use `create_app()` with the low-level Server API. FastMCP servers get routes injected automatically.
 
 ## Required: `info`
 
@@ -193,7 +212,7 @@ Override auto-generated metadata for specific tools, resources, or prompts. Usef
 | Resources | `description` |
 | Prompts | `description` |
 
-## Full Example (simple — no auth)
+## Full Example — TypeScript (simple — no auth)
 
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -237,7 +256,7 @@ const app = mcpspec(server, {
 app.listen(3000);
 ```
 
-## Full Example (with auth)
+## Full Example — TypeScript (with auth)
 
 Use `createHandler()` to wrap the handler with auth middleware. `/docs` and `/mcpspec.yaml` stay public, `/mcp` requires auth — same pattern as OpenAPI/Swagger UI.
 
@@ -291,4 +310,99 @@ const app = http.createServer(async (req, res) => {
 });
 
 app.listen(3000);
+```
+
+## Full Example — Python (FastMCP)
+
+```python
+from mcp.server.fastmcp import FastMCP
+from mcpspec import McpSpec
+
+mcp = FastMCP("my-server")
+# ... register tools with @mcp.tool() ...
+
+spec = McpSpec(
+    mcp,
+    info={
+        "title": "My MCP Server",
+        "version": "1.0.0",
+        "description": "Does useful things with data",
+        "repository": "https://github.com/me/my-server",
+        "license": "MIT",
+    },
+    transport=[
+        {
+            "type": "streamable-http",
+            "url": "/mcp",
+            "description": "HTTP endpoint",
+        },
+        {
+            "type": "stdio",
+            "command": "python -m my_server",
+            "description": "Local CLI transport",
+        },
+    ],
+    exclude=["internal_*"],
+    groups={
+        "Data": ["get_users", "list_items"],
+        "Admin": ["reset_cache"],
+    },
+    examples={
+        "get_users": [
+            {"title": "Fetch 10 users", "input": {"limit": 10}},
+        ],
+    },
+)
+
+mcp.run(transport="streamable-http")
+```
+
+## Full Example — Python (Server API with auth)
+
+Use `create_app()` with the low-level Server, then compose with auth middleware:
+
+```python
+from mcp.server.lowlevel import Server
+from mcpspec import McpSpec
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse
+from starlette.routing import Route
+import uvicorn
+
+server = Server("my-server")
+# ... register tools ...
+
+spec = McpSpec(
+    server,
+    info={
+        "title": "My MCP Server",
+        "version": "1.0.0",
+    },
+    transport=[
+        {
+            "type": "streamable-http",
+            "url": "/mcp",
+            "auth": {"type": "bearer", "description": "API key required"},
+        },
+    ],
+    groups={"Data": ["get_users", "list_items"]},
+)
+
+_app = Starlette(routes=[
+    Route("/docs", spec._handle_docs, methods=["GET"]),
+    Route("/mcpspec.yaml", spec._handle_yaml, methods=["GET"]),
+    Route("/mcp", mcp_transport),  # your MCP transport handler
+])
+
+async def app(scope, receive, send):
+    if scope["type"] == "http" and scope["path"] == "/mcp":
+        headers = dict(scope.get("headers", []))
+        auth = headers.get(b"authorization", b"").decode()
+        if not auth.startswith("Bearer "):
+            resp = JSONResponse({"error": "Unauthorized"}, status_code=401)
+            await resp(scope, receive, send)
+            return
+    await _app(scope, receive, send)
+
+uvicorn.run(app, port=3000)
 ```

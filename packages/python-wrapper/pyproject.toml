@@ -1,0 +1,21 @@
+[project]
+name = "mcpspec"
+version = "0.1.0"
+description = "Convenience wrapper for mcpspec-dev — OpenAPI-like specs for MCP servers"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Namish Saxena", email = "namish@mcpspec.dev" },
+]
+dependencies = [
+    "mcpspec-dev>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://mcpspec.dev"
+Repository = "https://github.com/namishsaxena/mcpspec"
+
+[build-system]
+requires = ["uv_build>=0.11.2,<0.12"]
+build-backend = "uv_build"

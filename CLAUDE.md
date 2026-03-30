@@ -16,6 +16,10 @@ OpenAPI-like specs for MCP servers. Introspects tools/resources/prompts via MCP 
 - Test: `pnpm test`
 - Typecheck: `pnpm typecheck`
 - Single test: `cd packages/typescript && pnpm vitest run tests/<file>.test.ts`
+- Python test: `cd packages/python && uv run pytest`
+- Python typecheck: `cd packages/python && uv run mypy --strict src/`
+- Python lint: `cd packages/python && uv run ruff check`
+- Python single test: `cd packages/python && uv run pytest tests/test_<file>.py`
 
 ## Commit Conventions
 
@@ -27,9 +31,11 @@ Conventional commits: `type(scope): description`
 ## Release Process
 
 - Use `/release-ts` command to release TypeScript package
+- Use `/release-py` command to release Python packages
 - Version is auto-determined from conventional commits since last tag
-- Tag format: `vTS-x.y.z` (TypeScript), `vPY-x.y.z` (Python, future)
+- Tag format: `vTS-x.y.z` (TypeScript), `vPY-x.y.z` (Python)
 - Package name: `@mcpspec-dev/typescript` on npm
+- Packages: `mcpspec-dev` + `mcpspec` on PyPI
 - Never manually edit version in package.json — the release command handles it
 
 ## Code Limits

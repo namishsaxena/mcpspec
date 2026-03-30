@@ -40,6 +40,7 @@ The introspection happens once (on first request to /docs or /mcpspec.yaml) and 
 
 Hide tools, resources, and prompts matching glob patterns:
 
+**TypeScript:**
 ```typescript
 mcpspec(server, {
   info: { title: "My Server", version: "1.0.0" },
@@ -47,33 +48,52 @@ mcpspec(server, {
 });
 ```
 
+**Python:**
+```python
+McpSpec(server, info={"title": "My Server", "version": "1.0.0"},
+        exclude=["internal_*", "admin_*", "debug_tool"])
+```
+
 ### Include patterns (allowlist mode)
 
 Only expose items matching specific patterns. When `include` is set, `exclude` is ignored — allowlist wins.
 
+**TypeScript:**
 ```typescript
 mcpspec(server, {
   info: { title: "My Server", version: "1.0.0" },
   include: ["public_*"],
-  // Only tools/resources/prompts starting with "public_" appear in the spec
 });
+```
+
+**Python:**
+```python
+McpSpec(server, info={"title": "My Server", "version": "1.0.0"},
+        include=["public_*"])
 ```
 
 ### Description overrides
 
 Replace auto-generated descriptions with custom text:
 
+**TypeScript:**
 ```typescript
 mcpspec(server, {
   info: { title: "My Server", version: "1.0.0" },
   overrides: {
     tools: {
       "sensitive_operation": {
-        description: "Performs data processing",  // hides implementation details
+        description: "Performs data processing",
       },
     },
   },
 });
+```
+
+**Python:**
+```python
+McpSpec(server, info={"title": "My Server", "version": "1.0.0"},
+        overrides={"tools": {"sensitive_operation": {"description": "Performs data processing"}}})
 ```
 
 ## Recommendations
@@ -85,7 +105,11 @@ mcpspec(server, {
 
 ## Auth and mcpspec
 
-mcpspec is auth-agnostic. It does not enforce, configure, or interfere with your server's authentication. If your MCP server requires auth, use `createHandler()` to compose mcpspec with your own middleware:
+mcpspec is auth-agnostic. It does not enforce, configure, or interfere with your server's authentication.
+
+### TypeScript
+
+Use `createHandler()` to compose mcpspec with your own middleware:
 
 ```typescript
 import http from "node:http";
@@ -102,10 +126,34 @@ http.createServer(async (req, res) => {
 }).listen(3000);
 ```
 
-This keeps `/docs` and `/mcpspec.yaml` publicly accessible (like Swagger UI) while protecting the actual MCP protocol endpoint. Introspection happens in-memory via `InMemoryTransport` — it bypasses HTTP entirely, so your auth middleware has no effect on spec generation.
+### Python
+
+Wrap the ASGI app with auth middleware that protects `/mcp` only:
+
+```python
+from starlette.responses import JSONResponse
+
+_inner_app = mcp.streamable_http_app()  # FastMCP with McpSpec routes injected
+
+async def app(scope, receive, send):
+    if scope["type"] == "http" and scope["path"] == "/mcp":
+        headers = dict(scope.get("headers", []))
+        auth = headers.get(b"authorization", b"").decode()
+        if not auth.startswith("Bearer "):
+            resp = JSONResponse({"error": "Unauthorized"}, status_code=401,
+                                headers={"WWW-Authenticate": "Bearer"})
+            await resp(scope, receive, send)
+            return
+    await _inner_app(scope, receive, send)
+```
+
+### Documenting auth
+
+This keeps `/docs` and `/mcpspec.yaml` publicly accessible (like Swagger UI) while protecting the actual MCP protocol endpoint. Introspection happens in-memory — it bypasses HTTP entirely, so your auth middleware has no effect on spec generation.
 
 Document your auth in the `transport` option so the spec and docs UI show what auth is required:
 
+**TypeScript:**
 ```typescript
 createHandler(server, {
   info: { ... },
@@ -115,6 +163,13 @@ createHandler(server, {
     auth: { type: "bearer", description: "API key required" },
   }],
 });
+```
+
+**Python:**
+```python
+McpSpec(server, info={...},
+        transport=[{"type": "streamable-http", "url": "/mcp",
+                    "auth": {"type": "bearer", "description": "API key required"}}])
 ```
 
 ## Threat model
