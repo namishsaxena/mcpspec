@@ -1,6 +1,7 @@
 """mcpspec-dev: OpenAPI-like specs for MCP servers."""
 
 from mcpspec_dev.filter import filter_items, match_glob
+from mcpspec_dev.generate import generate_spec, serialize_spec
 from mcpspec_dev.introspect import introspect
 from mcpspec_dev.types import (
     IntrospectionPrompt,
@@ -26,8 +27,10 @@ from mcpspec_dev.types import (
 
 __all__ = [
     "filter_items",
+    "generate_spec",
     "introspect",
     "match_glob",
+    "serialize_spec",
     "IntrospectionPrompt",
     "IntrospectionPromptArgument",
     "IntrospectionResource",

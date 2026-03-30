@@ -84,8 +84,8 @@ async def _list_all_tools(
                     title=getattr(tool, "title", None),
                     description=tool.description,
                     annotations=_annotations_to_dict(tool.annotations),
-                    inputSchema=dict(tool.inputSchema) if tool.inputSchema else None,
-                    outputSchema=getattr(tool, "outputSchema", None),
+                    input_schema=dict(tool.inputSchema) if tool.inputSchema else None,
+                    output_schema=getattr(tool, "outputSchema", None),
                 ),
             )
         cursor = response.nextCursor
@@ -110,7 +110,7 @@ async def _list_all_resources(
                     uri=str(resource.uri),
                     name=resource.name,
                     description=resource.description,
-                    mimeType=resource.mimeType,
+                    mime_type=resource.mimeType,
                 ),
             )
         cursor = response.nextCursor
