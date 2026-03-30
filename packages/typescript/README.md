@@ -1,22 +1,22 @@
-# mcpspec
+# @mcpspec-dev/typescript
 
 OpenAPI-like specs for MCP servers. One line of code. Zero config.
 
-mcpspec wraps your MCP server, introspects its tools/resources/prompts via the MCP protocol, and serves:
-- `/docs` — a self-contained HTML docs page (dark theme, no CDN)
+mcpspec wraps your MCP server, introspects its tools, resources, and prompts via the MCP protocol, and serves:
+- `/docs` — interactive HTML documentation (dark/light/high-contrast themes, no CDN)
 - `/mcpspec.yaml` — a machine-readable spec in a standardized format
 
 ## Install
 
 ```bash
-pnpm add mcpspec
+npm install @mcpspec-dev/typescript
 ```
 
 ## Quick Start
 
 ```typescript
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { mcpspec } from "mcpspec";
+import { mcpspec } from "@mcpspec-dev/typescript";
 
 const server = new McpServer({ name: "my-server", version: "1.0.0" });
 
@@ -88,7 +88,7 @@ const app = mcpspec(server, {
 - Use `exclude`/`include` to control what appears in the spec
 - Use `overrides` to redact or rewrite descriptions
 
-See the [security guide](../../docs/guides/security.md) for details.
+See the [security guide](https://github.com/namishsaxena/mcpspec/blob/main/docs/guides/security.md) for details.
 
 ## Spec Format
 
@@ -113,7 +113,7 @@ prompts: []
 
 - **Docs & Viewer:** [mcpspec.dev](https://mcpspec.dev)
 - **GitHub:** [github.com/namishsaxena/mcpspec](https://github.com/namishsaxena/mcpspec)
-- **npm:** [npmjs.com/package/mcpspec](https://www.npmjs.com/package/mcpspec)
+- **npm:** [npmjs.com/package/@mcpspec-dev/typescript](https://www.npmjs.com/package/@mcpspec-dev/typescript)
 
 ## License
 

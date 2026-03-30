@@ -6,8 +6,8 @@ Thank you for considering contributing to mcpspec! This guide covers both TypeSc
 
 ### Prerequisites
 
-- **Node.js** >= 18
-- **pnpm** >= 10 (`npm install -g pnpm`)
+- **Node.js** >= 22
+- **pnpm** >= 9 (`npm install -g pnpm`)
 - **Python** >= 3.11 (for Python package, Phase 2)
 - **uv** (for Python package management, Phase 2)
 
@@ -97,19 +97,30 @@ All code must follow the standards documented in `docs/architecture/`:
 - Ensure CI passes before requesting re-review
 - Squash and merge when approved
 
+### Docs UI
+
+The interactive documentation page is built from source files in `docs-ui/`:
+
+- `docs-ui/index.html` — HTML template with `__STYLES__` and `__SCRIPT__` placeholders
+- `docs-ui/styles.css` — all styles
+- `docs-ui/script.js` — client-side logic
+
+The build script `scripts/build-docs-ui.js` bundles these into a single self-contained HTML file. This runs automatically as part of `pnpm build` — no manual step needed. The bundled output (`packages/typescript/src/ui/docs.html`) is gitignored and regenerated on every build.
+
 ## Project Structure
 
 ```
 mcpspec/
-├── packages/typescript/    # npm: mcpspec
-├── packages/python/        # PyPI: mcpspec (Phase 2)
-├── docs-ui/                # Shared HTML docs template
+├── packages/typescript/    # npm: @mcpspec-dev/typescript
+├── packages/python/        # PyPI: mcpspec-dev (coming soon)
 ├── schema/                 # JSON Schema for mcpspec.yaml
+├── docs-ui/                # Docs HTML/CSS/JS source (bundled into package)
+├── scripts/                # Build scripts (docs-ui bundler)
 ├── examples/               # Example MCP servers
-├── docs/                   # Project documentation
-└── website/                # mcpspec.dev landing page
+├── docs/                   # Guides and architecture docs
+└── website/                # mcpspec.dev (coming soon)
 ```
 
 ## Questions?
 
-Open a [Discussion](https://github.com/namsaxen/mcpspec/discussions) or file an [Issue](https://github.com/namsaxen/mcpspec/issues).
+Open a [Discussion](https://github.com/namishsaxena/mcpspec/discussions) or file an [Issue](https://github.com/namishsaxena/mcpspec/issues).

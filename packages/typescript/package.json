@@ -23,7 +23,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && rm -rf dist/ui && cp -r src/ui dist/ui",
+    "build": "node ../../scripts/build-docs-ui.js && tsc && rm -rf dist/ui && cp -r src/ui dist/ui",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

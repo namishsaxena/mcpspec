@@ -43,6 +43,9 @@ htmlcov/
 .superpowers/
 mcpspec-project-plan.md
 
+# Generated build artifacts
+packages/typescript/src/ui/
+
 # custom
 docs/superpowers/
 docs/design/
