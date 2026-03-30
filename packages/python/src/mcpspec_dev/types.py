@@ -135,7 +135,7 @@ class McpSpecPrompt(BaseModel):
     arguments: list[McpSpecPromptArgument] | None = None
 
 
-class McpSpec(BaseModel):
+class McpSpecDocument(BaseModel):
     """Root mcpspec document model."""
 
     model_config = ConfigDict(populate_by_name=True)

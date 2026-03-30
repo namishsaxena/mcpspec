@@ -13,7 +13,7 @@ from mcpspec_dev.types import (
     IntrospectionResource,
     IntrospectionResult,
     IntrospectionTool,
-    McpSpec,
+    McpSpecDocument,
     McpSpecInfo,
     McpSpecOptions,
     McpSpecPrompt,
@@ -32,8 +32,8 @@ SCHEMA_URL = f"https://mcpspec.dev/schema/{MCPSPEC_VERSION}.json"
 def generate_spec(
     introspection: IntrospectionResult,
     options: McpSpecOptions,
-) -> McpSpec:
-    """Transform introspection results into an McpSpec document."""
+) -> McpSpecDocument:
+    """Transform introspection results into an McpSpecDocument."""
     include = options.include
     exclude = options.exclude
 
@@ -56,7 +56,7 @@ def generate_spec(
 
     transport = _build_transport(options)
 
-    return McpSpec(
+    return McpSpecDocument(
         mcpspec=MCPSPEC_VERSION,
         schema_url=SCHEMA_URL,
         info=McpSpecInfo(
@@ -77,8 +77,8 @@ def generate_spec(
     )
 
 
-def serialize_spec(spec: McpSpec) -> str:
-    """Serialize an McpSpec document to YAML matching TypeScript output."""
+def serialize_spec(spec: McpSpecDocument) -> str:
+    """Serialize an McpSpecDocument to YAML matching TypeScript output."""
     data = spec.model_dump(by_alias=True, exclude_none=True)
     result: str = yaml.dump(
         data,

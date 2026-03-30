@@ -1,7 +1,7 @@
 """Tests for mcpspec_dev.types — Pydantic model validation and serialization."""
 
 from mcpspec_dev.types import (
-    McpSpec,
+    McpSpecDocument,
     McpSpecAuth,
     McpSpecInfo,
     McpSpecOptions,
@@ -24,10 +24,10 @@ from mcpspec_dev.types import (
 
 
 class TestMcpSpecModels:
-    """Test McpSpec document models."""
+    """Test McpSpecDocument models."""
 
     def test_minimal_spec(self) -> None:
-        spec = McpSpec(
+        spec = McpSpecDocument(
             mcpspec="0.1.0",
             info=McpSpecInfo(name="test", version="1.0.0"),
         )
@@ -38,7 +38,7 @@ class TestMcpSpecModels:
         assert spec.prompts is None
 
     def test_full_spec(self) -> None:
-        spec = McpSpec(
+        spec = McpSpecDocument(
             mcpspec="0.1.0",
             schema_url="https://mcpspec.dev/schema/0.1.0.json",
             info=McpSpecInfo(
@@ -95,7 +95,7 @@ class TestMcpSpecModels:
         assert spec.transport[0].auth.type == "bearer"
 
     def test_spec_serialization_excludes_none(self) -> None:
-        spec = McpSpec(
+        spec = McpSpecDocument(
             mcpspec="0.1.0",
             info=McpSpecInfo(name="test", version="1.0.0"),
         )
@@ -105,7 +105,7 @@ class TestMcpSpecModels:
         assert "schema_url" not in data
 
     def test_spec_serialization_uses_camel_case_aliases(self) -> None:
-        spec = McpSpec(
+        spec = McpSpecDocument(
             mcpspec="0.1.0",
             schema_url="https://mcpspec.dev/schema/0.1.0.json",
             info=McpSpecInfo(name="test", version="1.0.0", server_url="http://localhost"),

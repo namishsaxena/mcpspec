@@ -3,14 +3,16 @@
 from mcpspec_dev.filter import filter_items, match_glob
 from mcpspec_dev.generate import generate_spec, serialize_spec
 from mcpspec_dev.introspect import introspect
+from mcpspec_dev.mcpspec import McpSpec
+from mcpspec_dev.serve import create_docs_route, create_yaml_route
 from mcpspec_dev.types import (
     IntrospectionPrompt,
     IntrospectionPromptArgument,
     IntrospectionResource,
     IntrospectionResult,
     IntrospectionTool,
-    McpSpec,
     McpSpecAuth,
+    McpSpecDocument,
     McpSpecInfo,
     McpSpecOptions,
     McpSpecPrompt,
@@ -26,11 +28,6 @@ from mcpspec_dev.types import (
 )
 
 __all__ = [
-    "filter_items",
-    "generate_spec",
-    "introspect",
-    "match_glob",
-    "serialize_spec",
     "IntrospectionPrompt",
     "IntrospectionPromptArgument",
     "IntrospectionResource",
@@ -38,6 +35,7 @@ __all__ = [
     "IntrospectionTool",
     "McpSpec",
     "McpSpecAuth",
+    "McpSpecDocument",
     "McpSpecInfo",
     "McpSpecOptions",
     "McpSpecPrompt",
@@ -50,4 +48,11 @@ __all__ = [
     "PromptOverride",
     "ResourceOverride",
     "ToolOverride",
+    "create_docs_route",
+    "create_yaml_route",
+    "filter_items",
+    "generate_spec",
+    "introspect",
+    "match_glob",
+    "serialize_spec",
 ]
