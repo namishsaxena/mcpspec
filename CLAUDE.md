@@ -24,6 +24,14 @@ Conventional commits: `type(scope): description`
 - Scopes: `ts`, `py`, `schema`, `docs-ui`, `example`, `ci`
 - Imperative mood, 72 char subject max
 
+## Release Process
+
+- Use `/release-ts` command to release TypeScript package
+- Version is auto-determined from conventional commits since last tag
+- Tag format: `vTS-x.y.z` (TypeScript), `vPY-x.y.z` (Python, future)
+- Package name: `@mcpspec-dev/typescript` on npm
+- Never manually edit version in package.json — the release command handles it
+
 ## Code Limits
 
 - **300 LOC max** per file (excluding tests)
