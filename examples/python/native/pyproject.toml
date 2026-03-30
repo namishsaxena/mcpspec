@@ -1,0 +1,10 @@
+[project]
+name = "mcpspec-example-task-manager-native"
+version = "0.0.0"
+description = "Task Manager example using native Server API + mcpspec"
+requires-python = ">=3.10"
+dependencies = [
+    "mcpspec-dev",
+    "mcp>=1.26.0",
+    "uvicorn>=0.31.1",
+]
