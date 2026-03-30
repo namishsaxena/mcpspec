@@ -1,5 +1,6 @@
 """mcpspec-dev: OpenAPI-like specs for MCP servers."""
 
+from mcpspec_dev.introspect import introspect
 from mcpspec_dev.types import (
     IntrospectionPrompt,
     IntrospectionPromptArgument,
@@ -23,6 +24,7 @@ from mcpspec_dev.types import (
 )
 
 __all__ = [
+    "introspect",
     "IntrospectionPrompt",
     "IntrospectionPromptArgument",
     "IntrospectionResource",
