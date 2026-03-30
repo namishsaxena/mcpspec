@@ -18,4 +18,10 @@ mkdirSync(tsUiDir, { recursive: true });
 writeFileSync(join(tsUiDir, "docs.html"), output, "utf-8");
 
 console.log("Built docs UI -> packages/typescript/src/ui/docs.html");
+
+const pyUiDir = join(root, "packages/python/src/mcpspec_dev/ui");
+mkdirSync(pyUiDir, { recursive: true });
+writeFileSync(join(pyUiDir, "docs.html"), output, "utf-8");
+console.log("Built docs UI -> packages/python/src/mcpspec_dev/ui/docs.html");
+
 console.log("  Size: " + Buffer.byteLength(output, "utf-8") + " bytes");

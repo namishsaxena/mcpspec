@@ -8,11 +8,13 @@ dist/
 
 # Python
 __pycache__/
-*.pyc
-*.pyo
-.venv/
+*.py[cod]
 *.egg-info/
+*.egg
+.venv/
 .eggs/
+*.so
+*.whl
 .ruff_cache/
 .mypy_cache/
 .pytest_cache/
@@ -45,6 +47,9 @@ mcpspec-project-plan.md
 
 # Generated build artifacts
 packages/typescript/src/ui/
+
+# MCP config (contains tokens)
+.mcp.json
 
 # custom
 docs/superpowers/

@@ -1,0 +1,118 @@
+[project]
+name = "mcpspec-dev"
+version = "0.1.0"
+description = "OpenAPI-like specs for MCP servers — introspect, generate, and serve documentation"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Namish Saxena", email = "namish@mcpspec.dev" },
+]
+keywords = ["mcp", "model-context-protocol", "documentation", "introspection", "openapi"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "pyyaml>=6.0.3",
+    "pydantic>=2.12.0",
+]
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.26.0"]
+
+[project.urls]
+Homepage = "https://mcpspec.dev"
+Documentation = "https://mcpspec.dev"
+Repository = "https://github.com/namishsaxena/mcpspec"
+
+[build-system]
+requires = ["uv_build>=0.11.2,<0.12"]
+build-backend = "uv_build"
+
+# --- Dev dependencies (managed by uv) ---
+
+[dependency-groups]
+dev = [
+    "mcp>=1.26.0",
+    "pytest>=9.0",
+    "pytest-asyncio>=1.0",
+    "pytest-cov>=7.0",
+    "mypy>=1.19",
+    "ruff>=0.15",
+]
+
+# --- Tool configuration ---
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.mypy]
+strict = true
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_any_generics = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "TCH",   # flake8-type-checking
+    "RUF",   # ruff-specific
+    "PT",    # flake8-pytest-style
+    "PIE",   # flake8-pie
+    "T20",   # flake8-print (no print in production)
+    "ANN",   # flake8-annotations
+    "S",     # flake8-bandit (security)
+]
+ignore = [
+    "S101",    # assert used (OK in tests)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["ANN", "S101", "T20"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.coverage.run]
+source = ["mcpspec_dev"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.",
+]
