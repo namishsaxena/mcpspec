@@ -1,8 +1,13 @@
 """Tests for mcpspec_dev.types — Pydantic model validation and serialization."""
 
 from mcpspec_dev.types import (
-    McpSpecDocument,
+    IntrospectionPrompt,
+    IntrospectionPromptArgument,
+    IntrospectionResource,
+    IntrospectionResult,
+    IntrospectionTool,
     McpSpecAuth,
+    McpSpecDocument,
     McpSpecInfo,
     McpSpecOptions,
     McpSpecPrompt,
@@ -12,14 +17,7 @@ from mcpspec_dev.types import (
     McpSpecToolAnnotations,
     McpSpecToolExample,
     McpSpecTransport,
-    IntrospectionResult,
-    IntrospectionTool,
-    IntrospectionResource,
-    IntrospectionPrompt,
-    IntrospectionPromptArgument,
     ToolOverride,
-    ResourceOverride,
-    PromptOverride,
 )
 
 
@@ -83,7 +81,11 @@ class TestMcpSpecModels:
                     name="report",
                     description="Generate report",
                     arguments=[
-                        McpSpecPromptArgument(name="format", description="Output format", required=True),
+                        McpSpecPromptArgument(
+                            name="format",
+                            description="Output format",
+                            required=True,
+                        ),
                     ],
                 ),
             ],

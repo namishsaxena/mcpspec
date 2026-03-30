@@ -98,10 +98,12 @@ class McpSpec:
     def create_app(self) -> Starlette:
         """Return a standalone Starlette ASGI app with /docs and /mcpspec.yaml."""
         base = (self._options.base_path or "").rstrip("/")
-        return Starlette(routes=[
-            Route(f"{base}/docs", self._handle_docs, methods=["GET"]),
-            Route(f"{base}/mcpspec.yaml", self._handle_yaml, methods=["GET"]),
-        ])
+        return Starlette(
+            routes=[
+                Route(f"{base}/docs", self._handle_docs, methods=["GET"]),
+                Route(f"{base}/mcpspec.yaml", self._handle_yaml, methods=["GET"]),
+            ]
+        )
 
     def _inject_routes(self, server: FastMCP) -> None:
         """Register /docs and /mcpspec.yaml on a FastMCP server."""

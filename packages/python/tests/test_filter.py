@@ -51,9 +51,7 @@ class TestFilterItems:
         assert any(i.name == "public_status" for i in result)
 
     def test_include_takes_precedence_over_exclude(self) -> None:
-        result = filter_items(
-            TEST_ITEMS, include=["get_*", "create_*"], exclude=["get_*"]
-        )
+        result = filter_items(TEST_ITEMS, include=["get_*", "create_*"], exclude=["get_*"])
         # include wins — only get_* and create_* are included
         assert len(result) == 2
         assert any(i.name == "get_users" for i in result)

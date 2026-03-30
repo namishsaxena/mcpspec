@@ -29,18 +29,10 @@ def filter_items(
     Include mode (allowlist) takes precedence over exclude mode when both are set.
     """
     if include is not None:
-        return [
-            item
-            for item in items
-            if any(match_glob(item.name, p) for p in include)
-        ]
+        return [item for item in items if any(match_glob(item.name, p) for p in include)]
 
     if exclude is not None and len(exclude) > 0:
-        return [
-            item
-            for item in items
-            if not any(match_glob(item.name, p) for p in exclude)
-        ]
+        return [item for item in items if not any(match_glob(item.name, p) for p in exclude)]
 
     return list(items)
 

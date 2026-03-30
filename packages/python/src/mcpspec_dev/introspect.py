@@ -38,12 +38,8 @@ async def introspect(
         capabilities = _extract_capabilities(caps)
 
         tools = await _list_all_tools(session) if caps and caps.tools else []
-        resources = (
-            await _list_all_resources(session) if caps and caps.resources else []
-        )
-        prompts = (
-            await _list_all_prompts(session) if caps and caps.prompts else []
-        )
+        resources = await _list_all_resources(session) if caps and caps.resources else []
+        prompts = await _list_all_prompts(session) if caps and caps.prompts else []
 
         return IntrospectionResult(
             tools=tools,

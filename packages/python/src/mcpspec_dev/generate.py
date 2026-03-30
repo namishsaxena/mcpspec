@@ -37,18 +37,14 @@ def generate_spec(
     include = options.include
     exclude = options.exclude
 
-    filtered_tools = filter_items(
-        introspection.tools, include=include, exclude=exclude
-    )
+    filtered_tools = filter_items(introspection.tools, include=include, exclude=exclude)
     # Resources have name guaranteed after _ensure_resource_names (name ?? uri)
     filtered_resources = filter_items(
         _ensure_resource_names(introspection.resources),  # type: ignore[type-var]
         include=include,
         exclude=exclude,
     )
-    filtered_prompts = filter_items(
-        introspection.prompts, include=include, exclude=exclude
-    )
+    filtered_prompts = filter_items(introspection.prompts, include=include, exclude=exclude)
 
     tools = [_map_tool(t, options) for t in filtered_tools]
     resources = [_map_resource(r, options) for r in filtered_resources]
@@ -114,9 +110,7 @@ def _map_tool(
         name=tool.name,
         title=override.title if override and override.title else tool.title,
         description=(
-            override.description
-            if override and override.description
-            else tool.description
+            override.description if override and override.description else tool.description
         ),
         group=override.group if override and override.group else group,
         annotations=_map_annotations(tool.annotations),
@@ -208,9 +202,7 @@ def _map_annotations(
     return result if has_values else None
 
 
-def _get_tool_override(
-    name: str, options: McpSpecOptions
-) -> ToolOverride | None:
+def _get_tool_override(name: str, options: McpSpecOptions) -> ToolOverride | None:
     """Look up a tool override from options."""
     overrides = options.overrides or {}
     tool_overrides: dict[str, Any] = overrides.get("tools", {})

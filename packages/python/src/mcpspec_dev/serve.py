@@ -41,9 +41,9 @@ def _build_docs_html(spec: McpSpecDocument) -> str:
     json_payload = json.dumps(
         spec.model_dump(by_alias=True, exclude_none=True),
     ).replace("</", "<\\/")
-    return _docs_template.replace(
-        "__SPEC_DATA__", json_payload
-    ).replace("__TITLE__", html.escape(title))
+    return _docs_template.replace("__SPEC_DATA__", json_payload).replace(
+        "__TITLE__", html.escape(title)
+    )
 
 
 GetSpec = Callable[[], "McpSpecDocument | None"]
@@ -59,9 +59,7 @@ def create_docs_route(
     async def docs_endpoint(request: Request) -> Response:
         spec = get_spec()
         if spec is None:
-            return PlainTextResponse(
-                SERVICE_UNAVAILABLE_MSG, status_code=503
-            )
+            return PlainTextResponse(SERVICE_UNAVAILABLE_MSG, status_code=503)
         return Response(
             content=_build_docs_html(spec),
             media_type="text/html; charset=utf-8",
@@ -78,9 +76,7 @@ def create_yaml_route(
     async def yaml_endpoint(request: Request) -> Response:
         spec = get_spec()
         if spec is None:
-            return PlainTextResponse(
-                SERVICE_UNAVAILABLE_MSG, status_code=503
-            )
+            return PlainTextResponse(SERVICE_UNAVAILABLE_MSG, status_code=503)
         return Response(
             content=serialize_spec(spec),
             media_type="text/yaml; charset=utf-8",

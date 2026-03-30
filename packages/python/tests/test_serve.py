@@ -1,8 +1,8 @@
 """Tests for mcpspec_dev.serve — Starlette route handlers."""
 
-from starlette.testclient import TestClient
 from starlette.applications import Starlette
 from starlette.routing import Route
+from starlette.testclient import TestClient
 
 from mcpspec_dev.serve import create_docs_route, create_yaml_route
 from mcpspec_dev.types import McpSpecDocument, McpSpecInfo, McpSpecTool
@@ -23,9 +23,11 @@ class TestDocsRoute:
 
     def test_serves_html_with_correct_content_type(self) -> None:
         spec = make_spec()
-        app = Starlette(routes=[
-            Route("/docs", create_docs_route(lambda: spec), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/docs", create_docs_route(lambda: spec), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/docs")
@@ -34,9 +36,11 @@ class TestDocsRoute:
 
     def test_html_contains_spec_title(self) -> None:
         spec = make_spec()
-        app = Starlette(routes=[
-            Route("/docs", create_docs_route(lambda: spec), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/docs", create_docs_route(lambda: spec), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/docs")
@@ -44,18 +48,22 @@ class TestDocsRoute:
 
     def test_html_contains_tool_names(self) -> None:
         spec = make_spec()
-        app = Starlette(routes=[
-            Route("/docs", create_docs_route(lambda: spec), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/docs", create_docs_route(lambda: spec), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/docs")
         assert "test_tool" in response.text
 
     def test_returns_503_when_spec_not_ready(self) -> None:
-        app = Starlette(routes=[
-            Route("/docs", create_docs_route(lambda: None), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/docs", create_docs_route(lambda: None), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/docs")
@@ -67,9 +75,11 @@ class TestYamlRoute:
 
     def test_serves_yaml_with_correct_content_type(self) -> None:
         spec = make_spec()
-        app = Starlette(routes=[
-            Route("/mcpspec.yaml", create_yaml_route(lambda: spec), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/mcpspec.yaml", create_yaml_route(lambda: spec), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/mcpspec.yaml")
@@ -78,9 +88,11 @@ class TestYamlRoute:
 
     def test_yaml_contains_spec_version(self) -> None:
         spec = make_spec()
-        app = Starlette(routes=[
-            Route("/mcpspec.yaml", create_yaml_route(lambda: spec), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/mcpspec.yaml", create_yaml_route(lambda: spec), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/mcpspec.yaml")
@@ -88,9 +100,11 @@ class TestYamlRoute:
         assert "test_tool" in response.text
 
     def test_returns_503_when_spec_not_ready(self) -> None:
-        app = Starlette(routes=[
-            Route("/mcpspec.yaml", create_yaml_route(lambda: None), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/mcpspec.yaml", create_yaml_route(lambda: None), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/mcpspec.yaml")
@@ -98,9 +112,11 @@ class TestYamlRoute:
 
     def test_yaml_contains_tool_data(self) -> None:
         spec = make_spec()
-        app = Starlette(routes=[
-            Route("/mcpspec.yaml", create_yaml_route(lambda: spec), methods=["GET"]),
-        ])
+        app = Starlette(
+            routes=[
+                Route("/mcpspec.yaml", create_yaml_route(lambda: spec), methods=["GET"]),
+            ]
+        )
         client = TestClient(app)
 
         response = client.get("/mcpspec.yaml")

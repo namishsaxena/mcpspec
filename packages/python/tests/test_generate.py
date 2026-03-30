@@ -77,9 +77,7 @@ class TestGenerateSpec:
     def test_generates_spec_with_resources(self) -> None:
         result = make_introspection(
             resources=[
-                IntrospectionResource(
-                    uri="data://items", name="items", description="All items"
-                ),
+                IntrospectionResource(uri="data://items", name="items", description="All items"),
             ],
         )
         options = make_options()
@@ -96,9 +94,7 @@ class TestGenerateSpec:
                     name="report",
                     description="Generate report",
                     arguments=[
-                        IntrospectionPromptArgument(
-                            name="format", required=True
-                        ),
+                        IntrospectionPromptArgument(name="format", required=True),
                     ],
                 ),
             ],
@@ -114,9 +110,7 @@ class TestGenerateSpec:
         result = make_introspection(
             tools=[
                 IntrospectionTool(name="public_tool", description="Public"),
-                IntrospectionTool(
-                    name="internal_debug", description="Debug"
-                ),
+                IntrospectionTool(name="internal_debug", description="Debug"),
             ],
         )
         options = make_options(exclude=["internal_*"])
@@ -145,9 +139,7 @@ class TestGenerateSpec:
                 IntrospectionTool(name="get_summary", description="Summary"),
             ],
         )
-        options = make_options(
-            groups={"Tasks": ["create_task"], "Analytics": ["get_summary"]}
-        )
+        options = make_options(groups={"Tasks": ["create_task"], "Analytics": ["get_summary"]})
         spec = generate_spec(result, options)
 
         assert spec.tools[0].group == "Tasks"
@@ -156,17 +148,11 @@ class TestGenerateSpec:
     def test_applies_tool_overrides(self) -> None:
         result = make_introspection(
             tools=[
-                IntrospectionTool(
-                    name="my_tool", description="Original desc"
-                ),
+                IntrospectionTool(name="my_tool", description="Original desc"),
             ],
         )
         options = make_options(
-            overrides={
-                "tools": {
-                    "my_tool": ToolOverride(description="Override desc")
-                }
-            }
+            overrides={"tools": {"my_tool": ToolOverride(description="Override desc")}}
         )
         spec = generate_spec(result, options)
 
@@ -179,11 +165,7 @@ class TestGenerateSpec:
             ],
         )
         options = make_options(
-            examples={
-                "my_tool": [
-                    McpSpecToolExample(title="Example", input={"x": 1})
-                ]
-            }
+            examples={"my_tool": [McpSpecToolExample(title="Example", input={"x": 1})]}
         )
         spec = generate_spec(result, options)
 
@@ -193,9 +175,7 @@ class TestGenerateSpec:
 
     def test_includes_transport_when_provided(self) -> None:
         result = make_introspection()
-        options = make_options(
-            transport=[{"type": "streamable-http", "url": "/mcp"}]
-        )
+        options = make_options(transport=[{"type": "streamable-http", "url": "/mcp"}])
         spec = generate_spec(result, options)
 
         assert spec.transport is not None
@@ -211,9 +191,7 @@ class TestGenerateSpec:
 
     def test_title_to_slug_conversion(self) -> None:
         result = make_introspection()
-        options = make_options(
-            info={"title": "My Cool Server!", "version": "2.0.0"}
-        )
+        options = make_options(info={"title": "My Cool Server!", "version": "2.0.0"})
         spec = generate_spec(result, options)
 
         assert spec.info.name == "my-cool-server"
@@ -251,9 +229,7 @@ class TestSerializeSpec:
 
     def test_serializes_to_valid_yaml(self) -> None:
         result = make_introspection(
-            tools=[
-                IntrospectionTool(name="test_tool", description="A tool")
-            ],
+            tools=[IntrospectionTool(name="test_tool", description="A tool")],
         )
         spec = generate_spec(result, make_options())
         yaml_str = serialize_spec(spec)
@@ -264,9 +240,7 @@ class TestSerializeSpec:
 
     def test_yaml_uses_block_style(self) -> None:
         result = make_introspection(
-            tools=[
-                IntrospectionTool(name="test_tool", description="A tool")
-            ],
+            tools=[IntrospectionTool(name="test_tool", description="A tool")],
         )
         spec = generate_spec(result, make_options())
         yaml_str = serialize_spec(spec)

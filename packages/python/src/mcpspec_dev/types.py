@@ -64,15 +64,9 @@ class McpSpecToolAnnotations(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     read_only_hint: bool | None = Field(default=None, alias="readOnlyHint")
-    destructive_hint: bool | None = Field(
-        default=None, alias="destructiveHint"
-    )
-    idempotent_hint: bool | None = Field(
-        default=None, alias="idempotentHint"
-    )
-    open_world_hint: bool | None = Field(
-        default=None, alias="openWorldHint"
-    )
+    destructive_hint: bool | None = Field(default=None, alias="destructiveHint")
+    idempotent_hint: bool | None = Field(default=None, alias="idempotentHint")
+    open_world_hint: bool | None = Field(default=None, alias="openWorldHint")
 
 
 class McpSpecToolExample(BaseModel):
@@ -95,12 +89,8 @@ class McpSpecTool(BaseModel):
     description: str | None = None
     group: str | None = None
     annotations: McpSpecToolAnnotations | None = None
-    input_schema: dict[str, Any] | None = Field(
-        default=None, alias="inputSchema"
-    )
-    output_schema: dict[str, Any] | None = Field(
-        default=None, alias="outputSchema"
-    )
+    input_schema: dict[str, Any] | None = Field(default=None, alias="inputSchema")
+    output_schema: dict[str, Any] | None = Field(default=None, alias="outputSchema")
     examples: list[McpSpecToolExample] | None = None
 
 
@@ -164,12 +154,8 @@ class IntrospectionTool(BaseModel):
     title: str | None = None
     description: str | None = None
     annotations: dict[str, Any] | None = None
-    input_schema: dict[str, Any] | None = Field(
-        default=None, alias="inputSchema"
-    )
-    output_schema: dict[str, Any] | None = Field(
-        default=None, alias="outputSchema"
-    )
+    input_schema: dict[str, Any] | None = Field(default=None, alias="inputSchema")
+    output_schema: dict[str, Any] | None = Field(default=None, alias="outputSchema")
 
 
 class IntrospectionResource(BaseModel):

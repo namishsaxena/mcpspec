@@ -139,12 +139,14 @@ class TestMcpSpecRouteInjection:
         spec = McpSpec(
             server,
             info={"title": "Transport Test", "version": "1.0.0"},
-            transport=[{
-                "type": "streamable-http",
-                "url": "/mcp",
-                "description": "Primary endpoint",
-                "auth": {"type": "bearer", "description": "Use API token"},
-            }],
+            transport=[
+                {
+                    "type": "streamable-http",
+                    "url": "/mcp",
+                    "description": "Primary endpoint",
+                    "auth": {"type": "bearer", "description": "Use API token"},
+                }
+            ],
         )
 
         app = spec.create_app()
