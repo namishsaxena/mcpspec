@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mcpspec — OpenAPI-like specs for MCP servers</title>
+  <meta name="description" content="One line of code gives your MCP server human-readable docs and a machine-readable spec. Open-source. TypeScript &amp; Python.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="/" class="nav-logo">mcpspec</a>
+      <a href="https://github.com/namishsaxena/mcpspec" rel="noopener noreferrer" class="nav-github" aria-label="GitHub repository">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-headline">MCP servers are<br>black boxes.</h1>
+      <p class="hero-subtitle">One line of code gives your server<br>human-readable docs and a machine-readable spec.</p>
+      <p class="hero-oss">Open-source. TypeScript &amp; Python.</p>
+
+      <div class="install-commands">
+        <div class="install-cmd">
+          <span class="prompt">$</span>
+          <span class="cmd-text">npm i @mcpspec-dev/typescript</span>
+          <button class="copy-btn" data-copy="npm i @mcpspec-dev/typescript" aria-label="Copy npm install command">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M2 11V2.5A.5.5 0 0 1 2.5 2H11"/></svg>
+          </button>
+        </div>
+        <div class="install-cmd">
+          <span class="prompt">$</span>
+          <span class="cmd-text">pip install mcpspec-dev</span>
+          <button class="copy-btn" data-copy="pip install mcpspec-dev" aria-label="Copy pip install command">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M2 11V2.5A.5.5 0 0 1 2.5 2H11"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="badges">
+        <a href="https://www.npmjs.com/package/@mcpspec-dev/typescript"><img src="https://img.shields.io/npm/dm/@mcpspec-dev/typescript?style=flat-square&amp;color=171717&amp;labelColor=171717&amp;label=npm" alt="npm downloads"></a>
+        <a href="https://pypi.org/project/mcpspec-dev/"><img src="https://img.shields.io/pypi/dm/mcpspec-dev?style=flat-square&amp;color=171717&amp;labelColor=171717&amp;label=pypi" alt="PyPI downloads"></a>
+        <a href="https://github.com/namishsaxena/mcpspec/stargazers"><img src="https://img.shields.io/github/stars/namishsaxena/mcpspec?style=flat-square&amp;color=171717&amp;labelColor=171717" alt="GitHub stars"></a>
+        <a href="https://github.com/namishsaxena/mcpspec/blob/main/LICENSE"><img src="https://img.shields.io/github/license/namishsaxena/mcpspec?style=flat-square&amp;color=171717&amp;labelColor=171717" alt="License"></a>
+      </div>
+
+      <div class="hero-ctas">
+        <a href="#code-snippet" class="btn btn-primary">Get started</a>
+        <a href="https://github.com/namishsaxena/mcpspec" rel="noopener noreferrer" class="btn btn-secondary">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code Snippet -->
+  <section class="section section-border" id="code-snippet">
+    <div class="container">
+      <div class="code-tabs" role="tablist">
+        <button class="code-tab active" role="tab" aria-selected="true" data-panel="panel-ts">TypeScript</button>
+        <button class="code-tab" role="tab" aria-selected="false" data-panel="panel-py">Python</button>
+      </div>
+      <div class="code-panels">
+        <div class="code-panel active" id="panel-ts" role="tabpanel">
+<pre><span class="kw">import</span> { McpServer } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server/mcp.js"</span>;
+<span class="kw">import</span> { mcpspec } <span class="kw">from</span> <span class="str">"@mcpspec-dev/typescript"</span>;
+
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="fn">McpServer</span>({ name: <span class="str">"my-server"</span>, version: <span class="str">"1.0.0"</span> });
+
+<span class="cmt">// register your tools, resources, prompts...</span>
+
+<span class="kw">const</span> app = <span class="fn">mcpspec</span>(server, {
+  info: { title: <span class="str">"My Server"</span>, version: <span class="str">"1.0.0"</span> }
+});
+
+app.<span class="fn">listen</span>(3000);
+<span class="cmt">// → /docs          human-readable docs</span>
+<span class="cmt">// → /mcpspec.yaml  machine-readable spec</span>
+<span class="cmt">// → /mcp           MCP endpoint</span></pre>
+        </div>
+        <div class="code-panel" id="panel-py" role="tabpanel">
+<pre><span class="kw">from</span> mcp.server.fastmcp <span class="kw">import</span> FastMCP
+<span class="kw">from</span> mcpspec <span class="kw">import</span> McpSpec
+
+mcp = <span class="fn">FastMCP</span>(<span class="str">"my-server"</span>)
+
+<span class="cmt"># register your tools, resources, prompts...</span>
+
+spec = <span class="fn">McpSpec</span>(mcp, info={
+    <span class="str">"title"</span>: <span class="str">"My Server"</span>,
+    <span class="str">"version"</span>: <span class="str">"1.0.0"</span>
+})
+
+mcp.<span class="fn">run</span>(transport=<span class="str">"streamable-http"</span>)
+<span class="cmt"># → /docs          human-readable docs</span>
+<span class="cmt"># → /mcpspec.yaml  machine-readable spec</span>
+<span class="cmt"># → /mcp           MCP endpoint</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What You Get -->
+  <section class="section section-border">
+    <div class="container">
+      <div class="features">
+        <div class="feature">
+          <div class="feature-name">/docs</div>
+          <div class="feature-desc">Human-readable documentation served directly from your MCP server.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-name">/mcpspec.yaml</div>
+          <div class="feature-desc">Machine-readable spec for registries, catalogs, and tooling.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-name">Health check</div>
+          <div class="feature-desc">If /docs responds, your server is alive. Zero-config health endpoint.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Viewer -->
+  <section class="section section-border" id="viewer">
+    <div class="container">
+      <div class="viewer-header">Try it — paste any mcpspec.yaml</div>
+      <div class="viewer-split">
+        <div class="viewer-input">
+          <div class="viewer-input-header">
+            <span>mcpspec.yaml</span>
+            <button class="btn btn-secondary" style="padding:4px 12px;font-size:11px;" id="load-example">Load example</button>
+          </div>
+          <textarea class="viewer-textarea" id="yaml-input" spellcheck="false" placeholder="Paste your mcpspec.yaml here..."></textarea>
+          <div class="viewer-error" id="yaml-error"></div>
+        </div>
+        <div class="viewer-preview">
+          <iframe id="preview-frame" sandbox="allow-scripts" title="mcpspec docs preview"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust -->
+  <section class="section section-border">
+    <div class="container">
+      <div class="trust-headline">Open source. Introspection only.</div>
+      <div class="trust-body">
+        <p>mcpspec never executes tools, reads resources, or accesses prompt content. Only list endpoints. Only metadata. Server authors control what's exposed.</p>
+        <p>MIT licensed. Built in the open.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">mcpspec</span>
+        <div class="footer-links">
+          <a href="https://www.npmjs.com/package/@mcpspec-dev/typescript">npm</a>
+          <a href="https://pypi.org/project/mcpspec-dev/">PyPI</a>
+          <a href="https://github.com/namishsaxena/mcpspec">GitHub</a>
+        </div>
+      </div>
+      <div class="footer-attribution">
+        Built by <a href="https://www.namishsaxena.com/">Namish Saxena</a>
+        <a href="https://github.com/namishsaxena" rel="noopener noreferrer" aria-label="Namish Saxena on GitHub">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="vendor/js-yaml.min.js"></script>
+  <script src="docs-template.js"></script>
+  <script src="example-spec.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
