@@ -40,8 +40,8 @@ describe("website/index.html", () => {
   });
 
   it("has shields.io badges", () => {
-    expect(html).toContain("img.shields.io/npm/dm/@mcpspec-dev/typescript");
-    expect(html).toContain("img.shields.io/pypi/dm/mcpspec-dev");
+    expect(html).toContain("img.shields.io/npm/v/@mcpspec-dev/typescript");
+    expect(html).toContain("img.shields.io/pypi/v/mcpspec-dev");
     expect(html).toContain("img.shields.io/github/stars/namishsaxena/mcpspec");
   });
 
