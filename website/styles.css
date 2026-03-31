@@ -11,7 +11,7 @@
   --border: #27272a;
   --text-primary: #fafafa;
   --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-muted: #87878f;
   --text-faint: #3f3f46;
   --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
@@ -30,7 +30,7 @@ body {
 }
 
 .container {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -100,11 +100,18 @@ body {
   margin-bottom: 20px;
 }
 
+.struck {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-secondary);
+  text-decoration-thickness: 2px;
+  color: var(--text-faint);
+}
+
 .hero-subtitle {
   font-family: var(--font-sans);
   font-size: 18px;
   font-weight: 400;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 20px;
 }
@@ -477,17 +484,17 @@ body {
   margin-top: 20px;
   font-family: var(--font-sans);
   font-size: 13px;
-  color: var(--text-faint);
+  color: var(--text-muted);
 }
 
 .footer-attribution a {
-  color: var(--text-faint);
+  color: var(--text-muted);
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .footer-attribution a:hover {
-  color: var(--text-muted);
+  color: var(--text-primary);
 }
 
 .footer-attribution svg {
