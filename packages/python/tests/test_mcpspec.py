@@ -1,5 +1,8 @@
 """Tests for mcpspec_dev.mcpspec — McpSpec class with route injection and create_app."""
 
+import logging
+
+import pytest
 from mcp.server.fastmcp import FastMCP
 from starlette.testclient import TestClient
 
@@ -165,3 +168,22 @@ class TestMcpSpecRouteInjection:
 
         response = client.get("/nonexistent")
         assert response.status_code == 404
+
+    async def test_returns_503_and_logs_on_introspection_failure(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """When introspection fails, log the error and serve 503."""
+        server = FastMCP("Test")
+        spec_instance = McpSpec(server, info={"title": "Test", "version": "1.0"})
+
+        # Poison the server reference so introspection fails
+        spec_instance._server = None  # type: ignore[assignment]
+
+        app = spec_instance.create_app()
+
+        with caplog.at_level(logging.WARNING, logger="mcpspec"):
+            client = TestClient(app)
+            response = client.get("/docs")
+
+        assert response.status_code == 503
+        assert "mcpspec introspection failed" in caplog.text

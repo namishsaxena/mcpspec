@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import html
 import json
+import logging
 from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -17,6 +18,8 @@ if TYPE_CHECKING:
 
     from mcpspec_dev.types import McpSpecDocument
 
+logger = logging.getLogger("mcpspec")
+
 _DOCS_TEMPLATE_PATH = Path(__file__).parent / "ui" / "docs.html"
 
 _FALLBACK_TEMPLATE = (
@@ -29,6 +32,7 @@ def _load_docs_template() -> str:
     try:
         return _DOCS_TEMPLATE_PATH.read_text(encoding="utf-8")
     except OSError:
+        logger.debug("docs.html template not found, using fallback")
         return _FALLBACK_TEMPLATE
 
 

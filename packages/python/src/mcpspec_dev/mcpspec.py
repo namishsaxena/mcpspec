@@ -7,6 +7,7 @@ via create_app(). Lazy introspection with caching and error recovery.
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import TYPE_CHECKING, Any
 
 from starlette.applications import Starlette
@@ -22,6 +23,8 @@ if TYPE_CHECKING:
     from mcp.server.fastmcp import FastMCP
     from mcp.server.lowlevel.server import Server
     from starlette.requests import Request
+
+logger = logging.getLogger("mcpspec")
 
 
 class McpSpec:
@@ -73,6 +76,7 @@ class McpSpec:
                 self._cached_spec = generate_spec(result, self._options)
                 return self._cached_spec
             except Exception:
+                logger.warning("mcpspec introspection failed", exc_info=True)
                 return None
 
     async def _handle_docs(self, request: Request) -> Response:
