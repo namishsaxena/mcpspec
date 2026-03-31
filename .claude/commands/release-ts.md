@@ -73,10 +73,10 @@ Do NOT proceed without explicit approval.
 On approval:
 
 1. Update `version` in `packages/typescript/package.json`
-2. Prepend the new release section to `CHANGELOG.md` (above the previous release)
+2. Prepend the new release section to `packages/typescript/CHANGELOG.md` (above the previous release)
 3. Stage and commit:
    ```bash
-   git add packages/typescript/package.json CHANGELOG.md
+   git add packages/typescript/package.json packages/typescript/CHANGELOG.md
    git commit -m "chore(ts): release x.y.z"
    ```
 4. Create tag:

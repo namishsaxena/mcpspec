@@ -75,10 +75,10 @@ Do NOT proceed without explicit approval.
 On approval:
 
 1. Update `version` in `packages/python/pyproject.toml`
-2. Prepend the new release section to `CHANGELOG.md` (above the previous release)
+2. Prepend the new release section to `packages/python/CHANGELOG.md` (above the previous release)
 3. Stage and commit:
    ```bash
-   git add packages/python/pyproject.toml CHANGELOG.md
+   git add packages/python/pyproject.toml packages/python/CHANGELOG.md
    git commit -m "chore(py): release x.y.z"
    ```
 4. Create tag:

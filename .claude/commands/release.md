@@ -45,7 +45,7 @@ Format: "TS: 0.1.0 -> 0.2.0 (2 features, 1 fix), PY: 0.1.0 -> 0.1.1 (1 fix)" or 
 ### 5. Hygiene checks
 
 Before user approval, verify:
-- [ ] CHANGELOG.md has entry for new version(s)
+- [ ] Package-specific CHANGELOG.md has entry for new version(s)
 - [ ] README install commands reference correct versions
 - [ ] Example servers build and run
 - [ ] `docs-ui/` build is fresh
