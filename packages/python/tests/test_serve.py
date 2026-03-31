@@ -153,3 +153,15 @@ class TestBuildDocsHtml:
 
         # The page should still render (not crash or produce broken HTML)
         assert "0.1.0" in html  # spec version should be present in the JSON
+
+    def test_title_with_single_quotes_is_escaped(self) -> None:
+        """Single quotes in title must be escaped (TypeScript escapes all 5 chars)."""
+        spec = McpSpecDocument(
+            mcpspec="0.1.0",
+            info=McpSpecInfo(name="test", version="1.0.0", title="O'Brien's Server"),
+        )
+        html = _build_docs_html(spec)
+
+        # Single quotes should be escaped in the <title> tag
+        # Check for both possible escape codes: &#x27; (hex) or &#39; (decimal)
+        assert "<title>O&#x27;Brien&#x27;s Server" in html or "<title>O&#39;Brien&#39;s Server" in html
