@@ -77,7 +77,7 @@ def generate_spec(
             license=options.info.get("license"),
             authors=_parse_authors(options.info.get("authors")),
         ),
-        capabilities=introspection.capabilities or None,
+        capabilities=introspection.capabilities,
         tools=tools,
         resources=resources,
         prompts=prompts,

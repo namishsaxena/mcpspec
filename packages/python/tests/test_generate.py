@@ -291,6 +291,20 @@ class TestGenerateSpec:
         with pytest.raises(SpecGenerationError, match="version"):
             generate_spec(result, options)
 
+    def test_preserves_empty_capabilities(self) -> None:
+        """TypeScript includes capabilities: {} — Python must match."""
+        result = IntrospectionResult(
+            tools=[],
+            resources=[],
+            prompts=[],
+            capabilities={},
+        )
+        options = make_options()
+        spec = generate_spec(result, options)
+
+        # Empty capabilities should be preserved, not converted to None
+        assert spec.capabilities == {}
+
 
 class TestSerializeSpec:
     """Test YAML serialization."""
