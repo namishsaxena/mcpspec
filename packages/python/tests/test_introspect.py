@@ -114,6 +114,30 @@ class TestIntrospect:
         assert len(result.resources) == 0
         assert len(result.prompts) == 0
 
+    @pytest.mark.asyncio
+    async def test_preserves_empty_input_schema(self) -> None:
+        """An empty inputSchema {} should be preserved, not become None.
+
+        This test verifies that the truthiness check bug is fixed:
+        bool({}) is False in Python, so `if tool.inputSchema` would
+        incorrectly convert {} to None. We need `is not None` instead.
+        """
+        server = FastMCP("Empty Schema Server")
+
+        @server.tool(description="Tool with no params")
+        async def no_params() -> str:
+            return "ok"
+
+        result = await introspect(server)
+
+        # The tool should have an inputSchema (even if it's a minimal object schema)
+        # rather than None. The MCP SDK typically returns at least
+        # {'type': 'object', 'properties': {}}, but the fix ensures that even
+        # a truly empty {} would be preserved.
+        tool = next(t for t in result.tools if t.name == "no_params")
+        assert tool.input_schema is not None
+        assert isinstance(tool.input_schema, dict)
+
 
 class TestPaginationBounds:
     """Test that pagination has safety limits."""

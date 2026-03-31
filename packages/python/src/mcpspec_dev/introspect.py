@@ -88,7 +88,7 @@ async def _list_all_tools(
                     title=getattr(tool, "title", None),
                     description=tool.description,
                     annotations=_annotations_to_dict(tool.annotations),
-                    input_schema=dict(tool.inputSchema) if tool.inputSchema else None,
+                    input_schema=dict(tool.inputSchema) if tool.inputSchema is not None else None,
                     output_schema=getattr(tool, "outputSchema", None),
                 ),
             )
