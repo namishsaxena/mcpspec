@@ -1,43 +1,32 @@
-name: CI
+name: CI — Python
 
 on:
   push:
     branches: [main]
+    paths:
+      - "packages/python/**"
+      - "packages/python-wrapper/**"
+      - "docs-ui/**"
+      - "schema/**"
   pull_request:
-    branches: [main]
+    paths:
+      - "packages/python/**"
+      - "packages/python-wrapper/**"
+      - "docs-ui/**"
+      - "schema/**"
 
 jobs:
-  typescript:
+  quality:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: pnpm/action-setup@v5
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Test
-        run: pnpm test
-
-      - name: Build
-        run: pnpm build
-
-  python:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v6
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         working-directory: packages/python
@@ -46,6 +35,10 @@ jobs:
       - name: Run tests
         working-directory: packages/python
         run: uv run pytest --tb=short -v
+
+      - name: Check coverage
+        working-directory: packages/python
+        run: uv run pytest --cov --cov-fail-under=90
 
       - name: Type check
         working-directory: packages/python
