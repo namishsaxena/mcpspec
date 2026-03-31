@@ -13,6 +13,7 @@ from mcpspec_dev.types import (
     IntrospectionResource,
     IntrospectionResult,
     IntrospectionTool,
+    McpSpecAuthor,
     McpSpecDocument,
     McpSpecInfo,
     McpSpecOptions,
@@ -63,7 +64,7 @@ def generate_spec(
             server_url=options.info.get("serverUrl"),
             repository=options.info.get("repository"),
             license=options.info.get("license"),
-            authors=options.info.get("authors"),
+            authors=_parse_authors(options.info.get("authors")),
         ),
         capabilities=introspection.capabilities or None,
         tools=tools,
@@ -239,3 +240,12 @@ def _title_to_slug(title: str) -> str:
     slug = title.lower()
     slug = re.sub(r"[^a-z0-9]+", "-", slug)
     return slug.strip("-")
+
+
+def _parse_authors(
+    raw: list[dict[str, Any]] | list[McpSpecAuthor] | None,
+) -> list[McpSpecAuthor] | None:
+    """Parse authors from raw dicts or McpSpecAuthor objects."""
+    if not raw:
+        return None
+    return [a if isinstance(a, McpSpecAuthor) else McpSpecAuthor(**a) for a in raw]

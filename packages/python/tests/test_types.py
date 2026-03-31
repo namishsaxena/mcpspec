@@ -116,6 +116,30 @@ class TestMcpSpecModels:
         assert "$schema" in data
         assert "serverUrl" in data["info"]
 
+    def test_info_authors_accepts_mcpspec_author_objects(self) -> None:
+        from mcpspec_dev.types import McpSpecAuthor
+
+        info = McpSpecInfo(
+            name="test",
+            version="1.0.0",
+            authors=[McpSpecAuthor(name="Alice", url="https://alice.dev")],
+        )
+        assert info.authors is not None
+        assert len(info.authors) == 1
+        assert info.authors[0].name == "Alice"
+        assert info.authors[0].url == "https://alice.dev"
+
+    def test_info_authors_serializes_correctly(self) -> None:
+        from mcpspec_dev.types import McpSpecAuthor
+
+        info = McpSpecInfo(
+            name="test",
+            version="1.0.0",
+            authors=[McpSpecAuthor(name="Bob")],
+        )
+        data = info.model_dump(exclude_none=True)
+        assert data["authors"] == [{"name": "Bob"}]
+
     def test_tool_annotations_all_fields(self) -> None:
         ann = McpSpecToolAnnotations(
             read_only_hint=True,

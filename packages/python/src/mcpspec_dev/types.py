@@ -55,7 +55,7 @@ class McpSpecInfo(BaseModel):
     server_url: str | None = Field(default=None, alias="serverUrl")
     repository: str | None = None
     license: str | None = None
-    authors: list[dict[str, Any]] | None = None
+    authors: list[McpSpecAuthor] | None = None
 
 
 class McpSpecToolAnnotations(BaseModel):
