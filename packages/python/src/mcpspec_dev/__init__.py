@@ -1,5 +1,6 @@
 """mcpspec-dev: OpenAPI-like specs for MCP servers."""
 
+from mcpspec_dev.errors import IntrospectionError, McpSpecError, SpecGenerationError
 from mcpspec_dev.filter import filter_items, match_glob
 from mcpspec_dev.generate import generate_spec, serialize_spec
 from mcpspec_dev.introspect import introspect
@@ -28,6 +29,7 @@ from mcpspec_dev.types import (
 )
 
 __all__ = [
+    "IntrospectionError",
     "IntrospectionPrompt",
     "IntrospectionPromptArgument",
     "IntrospectionResource",
@@ -36,6 +38,7 @@ __all__ = [
     "McpSpec",
     "McpSpecAuth",
     "McpSpecDocument",
+    "McpSpecError",
     "McpSpecInfo",
     "McpSpecOptions",
     "McpSpecPrompt",
@@ -47,6 +50,7 @@ __all__ = [
     "McpSpecTransport",
     "PromptOverride",
     "ResourceOverride",
+    "SpecGenerationError",
     "ToolOverride",
     "create_docs_route",
     "create_yaml_route",
