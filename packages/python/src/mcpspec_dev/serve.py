@@ -41,9 +41,9 @@ def _build_docs_html(spec: McpSpecDocument) -> str:
     json_payload = json.dumps(
         spec.model_dump(by_alias=True, exclude_none=True),
     ).replace("</", "<\\/")
-    return _docs_template.replace("__SPEC_DATA__", json_payload).replace(
-        "__TITLE__", html.escape(title)
-    )
+    return _docs_template.replace(
+        "__TITLE__", html.escape(title, quote=True)
+    ).replace("__SPEC_DATA__", json_payload)
 
 
 GetSpec = Callable[[], "McpSpecDocument | None"]
