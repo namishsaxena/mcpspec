@@ -551,18 +551,13 @@ name = "mcpspec-dev"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "mcp" },
     { name = "pydantic" },
     { name = "pyyaml" },
 ]
 
-[package.optional-dependencies]
-mcp = [
-    { name = "mcp" },
-]
-
 [package.dev-dependencies]
 dev = [
-    { name = "mcp" },
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -573,15 +568,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.26.0" },
+    { name = "mcp", specifier = ">=1.26.0" },
     { name = "pydantic", specifier = ">=2.12.0" },
     { name = "pyyaml", specifier = ">=6.0.3" },
 ]
-provides-extras = ["mcp"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "mcp", specifier = ">=1.26.0" },
     { name = "mypy", specifier = ">=1.19" },
     { name = "pytest", specifier = ">=9.0" },
     { name = "pytest-asyncio", specifier = ">=1.0" },
