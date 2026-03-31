@@ -23,7 +23,7 @@ Use `createHandler()` when you need middleware (auth, logging, CORS). Use `mcpsp
 All configuration is passed as keyword arguments to the `McpSpec` constructor.
 
 ```python
-from mcpspec import McpSpec
+from mcpspec_dev import McpSpec
 
 # FastMCP — routes injected automatically via custom_route()
 spec = McpSpec(mcp, info={"title": "My Server", "version": "1.0.0"})
@@ -316,7 +316,7 @@ app.listen(3000);
 
 ```python
 from mcp.server.fastmcp import FastMCP
-from mcpspec import McpSpec
+from mcpspec_dev import McpSpec
 
 mcp = FastMCP("my-server")
 # ... register tools with @mcp.tool() ...
@@ -363,7 +363,7 @@ Use `create_app()` with the low-level Server, then compose with auth middleware:
 
 ```python
 from mcp.server.lowlevel import Server
-from mcpspec import McpSpec
+from mcpspec_dev import McpSpec
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 from starlette.routing import Route

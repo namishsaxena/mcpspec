@@ -1,4 +1,4 @@
-Release the Python packages to PyPI. Automates pre-flight checks, version bumping, changelog generation, tagging, and pushing.
+Release the Python package to PyPI. Automates pre-flight checks, version bumping, changelog generation, tagging, and pushing.
 
 ## Steps
 
@@ -29,7 +29,7 @@ If no tag exists, this is the first release — use the version in `packages/pyt
 
 Collect commits since that tag, filtering to Python-scoped changes:
 - Commits with `(py)` or `(docs-ui)` or `(schema)` scope
-- Commits touching `packages/python/` or `packages/python-wrapper/`
+- Commits touching `packages/python/`
 - Unscoped commits like `docs:`, `ci:`, `chore:` that are relevant
 
 Determine the bump from commit types:
@@ -75,15 +75,13 @@ Do NOT proceed without explicit approval.
 On approval:
 
 1. Update `version` in `packages/python/pyproject.toml`
-2. Update `version` in `packages/python-wrapper/pyproject.toml` (must match)
-3. Update `mcpspec-dev>=x.y.z` dependency in wrapper's `pyproject.toml`
-4. Prepend the new release section to `CHANGELOG.md` (above the previous release)
-5. Stage and commit:
+2. Prepend the new release section to `CHANGELOG.md` (above the previous release)
+3. Stage and commit:
    ```bash
-   git add packages/python/pyproject.toml packages/python-wrapper/pyproject.toml CHANGELOG.md
+   git add packages/python/pyproject.toml CHANGELOG.md
    git commit -m "chore(py): release x.y.z"
    ```
-6. Create tag:
+4. Create tag:
    ```bash
    git tag vPY-x.y.z
    ```
@@ -104,5 +102,4 @@ git push --tags
 - NEVER proceed without user approval at steps 4 and 6
 - NEVER manually edit version — always use this command
 - NEVER include Co-Authored-By in the release commit
-- Always update BOTH pyproject.toml files (main + wrapper)
 - Always stage specific files (never `git add -A`)

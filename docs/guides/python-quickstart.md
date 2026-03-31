@@ -7,15 +7,15 @@ Get your Python MCP server documented in under 5 minutes.
 - Python >= 3.10
 - An existing MCP server using the `mcp` SDK
 
-## Step 1: Install mcpspec
+## Step 1: Install mcpspec-dev
 
 ```bash
-pip install mcpspec
+pip install mcpspec-dev
 # or
-uv add mcpspec
+uv add mcpspec-dev
 ```
 
-mcpspec has minimal dependencies (`pyyaml`, `pydantic`) and expects `mcp` as a peer dependency (you already have this). It uses Starlette for route serving — which `mcp` already depends on.
+mcpspec-dev has minimal dependencies (`pyyaml`, `pydantic`) and expects `mcp` as a peer dependency (you already have this). It uses Starlette for route serving — which `mcp` already depends on.
 
 ## Step 2: Create your MCP server
 
@@ -35,7 +35,7 @@ def greet(name: str) -> str:
 ## Step 3: Wrap with McpSpec
 
 ```python
-from mcpspec import McpSpec
+from mcpspec_dev import McpSpec
 
 spec = McpSpec(mcp, info={
     "title": "My MCP Server",
@@ -70,7 +70,7 @@ If you use the low-level `Server` API instead of FastMCP, McpSpec can't inject r
 
 ```python
 from mcp.server.lowlevel import Server
-from mcpspec import McpSpec
+from mcpspec_dev import McpSpec
 import uvicorn
 
 server = Server("my-server")

@@ -35,7 +35,7 @@ Conventional commits: `type(scope): description`
 - Version is auto-determined from conventional commits since last tag
 - Tag format: `vTS-x.y.z` (TypeScript), `vPY-x.y.z` (Python)
 - Package name: `@mcpspec-dev/typescript` on npm
-- Packages: `mcpspec-dev` + `mcpspec` on PyPI
+- Package: `mcpspec-dev` on PyPI
 - Never manually edit version in package.json — the release command handles it
 
 ## Code Limits

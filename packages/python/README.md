@@ -9,16 +9,16 @@ mcpspec wraps your MCP server, introspects its tools, resources, and prompts via
 ## Install
 
 ```bash
-pip install mcpspec
+pip install mcpspec-dev
 # or
-uv add mcpspec
+uv add mcpspec-dev
 ```
 
 ## Quick Start (FastMCP)
 
 ```python
 from mcp.server.fastmcp import FastMCP
-from mcpspec import McpSpec
+from mcpspec_dev import McpSpec
 
 mcp = FastMCP("my-server")
 
@@ -37,7 +37,7 @@ Visit `http://localhost:8000/docs` and `http://localhost:8000/mcpspec.yaml`.
 
 ```python
 from mcp.server.lowlevel import Server
-from mcpspec import McpSpec
+from mcpspec_dev import McpSpec
 import uvicorn
 
 server = Server("my-server")

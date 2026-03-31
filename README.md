@@ -13,7 +13,7 @@ mcpspec wraps your MCP server, introspects its tools, resources, and prompts via
 | Package | Registry | Status | Docs |
 |---------|----------|--------|------|
 | [@mcpspec-dev/typescript](packages/typescript/) | [npm](https://www.npmjs.com/package/@mcpspec-dev/typescript) | Available | [README](packages/typescript/README.md) |
-| mcpspec-dev (Python) | PyPI | Coming soon | — |
+| [mcpspec-dev (Python)](packages/python/) | [PyPI](https://pypi.org/project/mcpspec-dev/) | Available | [README](packages/python/README.md) |
 
 ## Quick Start (TypeScript)
 
@@ -65,7 +65,7 @@ See [docs/guides/security.md](docs/guides/security.md) for details.
 ```
 mcpspec/
 ├── packages/typescript/       # @mcpspec-dev/typescript (npm)
-├── packages/python/           # mcpspec-dev on PyPI (coming soon)
+├── packages/python/           # mcpspec-dev on PyPI
 ├── schema/                    # JSON Schema for mcpspec.yaml
 ├── docs-ui/                   # Docs HTML/CSS/JS source (bundled into package)
 ├── scripts/                   # Build scripts (docs-ui bundler)

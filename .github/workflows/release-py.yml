@@ -8,6 +8,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: pypi
     permissions:
       contents: write
       id-token: write
@@ -34,21 +35,9 @@ jobs:
         working-directory: packages/python
         run: uv build
 
-      - name: Build mcpspec wrapper
-        working-directory: packages/python-wrapper
-        run: uv build
-
       - name: Publish mcpspec-dev to PyPI
         working-directory: packages/python
-        run: uv publish
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-
-      - name: Publish mcpspec to PyPI
-        working-directory: packages/python-wrapper
-        run: uv publish
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish --trusted-publishing always
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

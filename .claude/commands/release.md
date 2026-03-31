@@ -29,7 +29,7 @@ PY_TAG=$(git tag -l "vPY-*" --sort=-v:refname | head -1)
 echo "Last PY tag: $PY_TAG"
 
 # Commits since last PY tag touching Python-relevant paths
-git log ${PY_TAG}..HEAD --oneline -- packages/python/ packages/python-wrapper/ docs-ui/ schema/ | head -20
+git log ${PY_TAG}..HEAD --oneline -- packages/python/ docs-ui/ schema/ | head -20
 ```
 
 Shared changes (`docs-ui/`, `schema/`) trigger both packages.

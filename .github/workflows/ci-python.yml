@@ -5,13 +5,11 @@ on:
     branches: [main]
     paths:
       - "packages/python/**"
-      - "packages/python-wrapper/**"
       - "docs-ui/**"
       - "schema/**"
   pull_request:
     paths:
       - "packages/python/**"
-      - "packages/python-wrapper/**"
       - "docs-ui/**"
       - "schema/**"
 

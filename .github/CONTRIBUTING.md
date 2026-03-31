@@ -112,7 +112,7 @@ The build script `scripts/build-docs-ui.js` bundles these into a single self-con
 ```
 mcpspec/
 ├── packages/typescript/    # npm: @mcpspec-dev/typescript
-├── packages/python/        # PyPI: mcpspec-dev (coming soon)
+├── packages/python/        # PyPI: mcpspec-dev
 ├── schema/                 # JSON Schema for mcpspec.yaml
 ├── docs-ui/                # Docs HTML/CSS/JS source (bundled into package)
 ├── scripts/                # Build scripts (docs-ui bundler)
