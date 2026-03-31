@@ -163,5 +163,6 @@ class TestBuildDocsHtml:
         html = _build_docs_html(spec)
 
         # Single quotes should be escaped in the <title> tag
-        # Check for both possible escape codes: &#x27; (hex) or &#39; (decimal)
-        assert "<title>O&#x27;Brien&#x27;s Server" in html or "<title>O&#39;Brien&#39;s Server" in html
+        has_hex = "<title>O&#x27;Brien&#x27;s Server" in html
+        has_dec = "<title>O&#39;Brien&#39;s Server" in html
+        assert has_hex or has_dec
