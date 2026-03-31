@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.1.1] - 2026-03-31
+
+### Fixed
+- URL scheme validation in docs UI to prevent javascript: XSS
+
+**Full Changelog**: https://github.com/namishsaxena/mcpspec/compare/vTS-0.1.0...vTS-0.1.1
+
 ## [0.1.0] - 2026-03-30
 
 ### Added
