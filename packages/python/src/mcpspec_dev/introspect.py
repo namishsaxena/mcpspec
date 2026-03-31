@@ -25,6 +25,10 @@ if TYPE_CHECKING:
     from mcp.types import ServerCapabilities
 
 
+MAX_PAGES = 100
+"""Maximum pagination pages to prevent infinite loops from malicious servers."""
+
+
 async def introspect(
     server: FastMCP | Server[object],
 ) -> IntrospectionResult:
@@ -70,8 +74,12 @@ async def _list_all_tools(
     """List all tools with pagination support."""
     tools: list[IntrospectionTool] = []
     cursor: str | None = None
+    page = 0
 
     while True:
+        page += 1
+        if page > MAX_PAGES:
+            break
         response = await session.list_tools(cursor)
         for tool in response.tools:
             tools.append(
@@ -97,8 +105,12 @@ async def _list_all_resources(
     """List all resources with pagination support."""
     resources: list[IntrospectionResource] = []
     cursor: str | None = None
+    page = 0
 
     while True:
+        page += 1
+        if page > MAX_PAGES:
+            break
         response = await session.list_resources(cursor)
         for resource in response.resources:
             resources.append(
@@ -122,8 +134,12 @@ async def _list_all_prompts(
     """List all prompts with pagination support."""
     prompts: list[IntrospectionPrompt] = []
     cursor: str | None = None
+    page = 0
 
     while True:
+        page += 1
+        if page > MAX_PAGES:
+            break
         response = await session.list_prompts(cursor)
         for prompt in response.prompts:
             arguments = None

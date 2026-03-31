@@ -3,7 +3,7 @@
 import pytest
 from mcp.server.fastmcp import FastMCP
 
-from mcpspec_dev.introspect import introspect
+from mcpspec_dev.introspect import MAX_PAGES, introspect
 from mcpspec_dev.types import IntrospectionResult
 
 
@@ -113,3 +113,10 @@ class TestIntrospect:
         assert len(result.tools) == 1
         assert len(result.resources) == 0
         assert len(result.prompts) == 0
+
+
+class TestPaginationBounds:
+    """Test that pagination has safety limits."""
+
+    def test_max_pages_constant_exists(self) -> None:
+        assert MAX_PAGES == 100
