@@ -1,7 +1,9 @@
 """Tests for mcpspec_dev.generate — spec generation and YAML serialization."""
 
+import pytest
 import yaml
 
+from mcpspec_dev.errors import SpecGenerationError
 from mcpspec_dev.generate import generate_spec, serialize_spec
 from mcpspec_dev.types import (
     IntrospectionPrompt,
@@ -276,6 +278,18 @@ class TestGenerateSpec:
         options = make_options(overrides={"prompts": {"report": {"description": "Dict override"}}})
         spec = generate_spec(result, options)
         assert spec.prompts[0].description == "Dict override"
+
+    def test_raises_on_missing_info_title(self) -> None:
+        result = make_introspection()
+        options = make_options(info={"version": "1.0.0"})
+        with pytest.raises(SpecGenerationError, match="title"):
+            generate_spec(result, options)
+
+    def test_raises_on_missing_info_version(self) -> None:
+        result = make_introspection()
+        options = make_options(info={"title": "Test"})
+        with pytest.raises(SpecGenerationError, match="version"):
+            generate_spec(result, options)
 
 
 class TestSerializeSpec:

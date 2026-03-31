@@ -7,6 +7,7 @@ from typing import Any
 
 import yaml
 
+from mcpspec_dev.errors import SpecGenerationError
 from mcpspec_dev.filter import filter_items
 from mcpspec_dev.types import (
     IntrospectionPrompt,
@@ -37,6 +38,14 @@ def generate_spec(
     options: McpSpecOptions,
 ) -> McpSpecDocument:
     """Transform introspection results into an McpSpecDocument."""
+    for required_key in ("title", "version"):
+        if required_key not in options.info:
+            msg = (
+                f"options.info must contain '{required_key}'. "
+                f"Got keys: {sorted(options.info.keys())}"
+            )
+            raise SpecGenerationError(msg)
+
     include = options.include
     exclude = options.exclude
 
