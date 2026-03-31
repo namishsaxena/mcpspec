@@ -223,6 +223,16 @@ class TestGenerateSpec:
         assert spec.tools[0].annotations.read_only_hint is True
         assert spec.tools[0].annotations.idempotent_hint is True
 
+    def test_generate_spec_does_not_mutate_introspection_result(self) -> None:
+        resource = IntrospectionResource(uri="data://items", name=None, description="Items")
+        result = make_introspection(resources=[resource])
+        options = make_options()
+
+        generate_spec(result, options)
+
+        # Original resource must not be mutated
+        assert resource.name is None
+
 
 class TestSerializeSpec:
     """Test YAML serialization."""

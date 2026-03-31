@@ -91,11 +91,16 @@ def serialize_spec(spec: McpSpecDocument) -> str:
 def _ensure_resource_names(
     resources: list[IntrospectionResource],
 ) -> list[IntrospectionResource]:
-    """Ensure each resource has a name (fall back to uri)."""
-    for r in resources:
-        if r.name is None:
-            r.name = r.uri
-    return resources
+    """Return new resources with name defaulting to uri. Does not mutate input."""
+    return [
+        IntrospectionResource(
+            uri=r.uri,
+            name=r.name if r.name is not None else r.uri,
+            description=r.description,
+            mime_type=r.mime_type,
+        )
+        for r in resources
+    ]
 
 
 def _map_tool(
