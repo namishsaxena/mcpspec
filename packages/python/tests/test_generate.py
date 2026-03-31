@@ -233,6 +233,50 @@ class TestGenerateSpec:
         # Original resource must not be mutated
         assert resource.name is None
 
+    def test_empty_string_override_is_honored(self) -> None:
+        """TypeScript ?? treats '' as a valid value. Python must match."""
+        result = make_introspection(
+            tools=[
+                IntrospectionTool(name="my_tool", title="Original", description="Original desc"),
+            ],
+        )
+        options = make_options(
+            overrides={"tools": {"my_tool": ToolOverride(title="", description="")}}
+        )
+        spec = generate_spec(result, options)
+
+        # Empty string overrides should replace originals (nullish, not truthiness)
+        assert spec.tools[0].title == ""
+        assert spec.tools[0].description == ""
+
+    def test_accepts_dict_tool_overrides(self) -> None:
+        result = make_introspection(
+            tools=[IntrospectionTool(name="my_tool", description="Original")],
+        )
+        options = make_options(overrides={"tools": {"my_tool": {"description": "Dict override"}}})
+        spec = generate_spec(result, options)
+        assert spec.tools[0].description == "Dict override"
+
+    def test_accepts_dict_resource_overrides(self) -> None:
+        result = make_introspection(
+            resources=[
+                IntrospectionResource(uri="data://items", name="items", description="Original"),
+            ],
+        )
+        options = make_options(overrides={"resources": {"items": {"description": "Dict override"}}})
+        spec = generate_spec(result, options)
+        assert spec.resources[0].description == "Dict override"
+
+    def test_accepts_dict_prompt_overrides(self) -> None:
+        result = make_introspection(
+            prompts=[
+                IntrospectionPrompt(name="report", description="Original"),
+            ],
+        )
+        options = make_options(overrides={"prompts": {"report": {"description": "Dict override"}}})
+        spec = generate_spec(result, options)
+        assert spec.prompts[0].description == "Dict override"
+
 
 class TestSerializeSpec:
     """Test YAML serialization."""

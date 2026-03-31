@@ -23,6 +23,8 @@ from mcpspec_dev.types import (
     McpSpecTool,
     McpSpecToolAnnotations,
     McpSpecTransport,
+    PromptOverride,
+    ResourceOverride,
     ToolOverride,
 )
 
@@ -114,11 +116,13 @@ def _map_tool(
 
     return McpSpecTool(
         name=tool.name,
-        title=override.title if override and override.title else tool.title,
+        title=override.title if override is not None and override.title is not None else tool.title,
         description=(
-            override.description if override and override.description else tool.description
+            override.description
+            if override is not None and override.description is not None
+            else tool.description
         ),
-        group=override.group if override and override.group else group,
+        group=override.group if override is not None and override.group is not None else group,
         annotations=_map_annotations(tool.annotations),
         input_schema=tool.input_schema,
         output_schema=tool.output_schema,
@@ -131,17 +135,14 @@ def _map_resource(
     options: McpSpecOptions,
 ) -> McpSpecResource:
     """Map an introspection resource to a spec resource with overrides."""
-    overrides = options.overrides or {}
-    resource_overrides: dict[str, Any] = overrides.get("resources", {})
-    key = resource.name if resource.name else resource.uri
-    override = resource_overrides.get(key)
+    override = _get_resource_override(resource.name or resource.uri, options)
 
     return McpSpecResource(
         uri=resource.uri,
         name=resource.name,
         description=(
             override.description
-            if override and hasattr(override, "description") and override.description
+            if override is not None and override.description is not None
             else resource.description
         ),
         mime_type=resource.mime_type,
@@ -153,9 +154,7 @@ def _map_prompt(
     options: McpSpecOptions,
 ) -> McpSpecPrompt:
     """Map an introspection prompt to a spec prompt with overrides."""
-    overrides = options.overrides or {}
-    prompt_overrides: dict[str, Any] = overrides.get("prompts", {})
-    override = prompt_overrides.get(prompt.name)
+    override = _get_prompt_override(prompt.name, options)
 
     arguments = None
     if prompt.arguments:
@@ -172,7 +171,7 @@ def _map_prompt(
         name=prompt.name,
         description=(
             override.description
-            if override and hasattr(override, "description") and override.description
+            if override is not None and override.description is not None
             else prompt.description
         ),
         arguments=arguments,
@@ -209,12 +208,44 @@ def _map_annotations(
 
 
 def _get_tool_override(name: str, options: McpSpecOptions) -> ToolOverride | None:
-    """Look up a tool override from options."""
+    """Look up a tool override from options. Accepts ToolOverride or raw dict."""
     overrides = options.overrides or {}
     tool_overrides: dict[str, Any] = overrides.get("tools", {})
     override = tool_overrides.get(name)
+    if override is None:
+        return None
     if isinstance(override, ToolOverride):
         return override
+    if isinstance(override, dict):
+        return ToolOverride(**override)
+    return None
+
+
+def _get_resource_override(key: str, options: McpSpecOptions) -> ResourceOverride | None:
+    """Look up a resource override from options. Accepts ResourceOverride or raw dict."""
+    overrides = options.overrides or {}
+    resource_overrides: dict[str, Any] = overrides.get("resources", {})
+    override = resource_overrides.get(key)
+    if override is None:
+        return None
+    if isinstance(override, ResourceOverride):
+        return override
+    if isinstance(override, dict):
+        return ResourceOverride(**override)
+    return None
+
+
+def _get_prompt_override(name: str, options: McpSpecOptions) -> PromptOverride | None:
+    """Look up a prompt override from options. Accepts PromptOverride or raw dict."""
+    overrides = options.overrides or {}
+    prompt_overrides: dict[str, Any] = overrides.get("prompts", {})
+    override = prompt_overrides.get(name)
+    if override is None:
+        return None
+    if isinstance(override, PromptOverride):
+        return override
+    if isinstance(override, dict):
+        return PromptOverride(**override)
     return None
 
 
