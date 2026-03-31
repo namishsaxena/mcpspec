@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r build",
+    "build:website": "node scripts/build-website.js",
     "test": "pnpm -r test",
     "clean": "pnpm -r clean",
     "typecheck": "pnpm -r typecheck"
