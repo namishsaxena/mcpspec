@@ -169,10 +169,13 @@ async def _list_all_prompts(
 def _annotations_to_dict(
     annotations: object,
 ) -> dict[str, Any] | None:
-    """Convert tool annotations to a plain dict, or None if absent."""
+    """Convert tool annotations to a plain dict, or None if absent.
+
+    Preserves all values including None — filtering is done in generate.py.
+    """
     if annotations is None:
         return None
     if hasattr(annotations, "model_dump"):
-        data: dict[str, Any] = annotations.model_dump(exclude_none=True)
-        return data if data else None
+        data: dict[str, Any] = annotations.model_dump()
+        return data if any(v is not None for v in data.values()) else None
     return None

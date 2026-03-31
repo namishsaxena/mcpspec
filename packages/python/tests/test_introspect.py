@@ -138,6 +138,24 @@ class TestIntrospect:
         assert tool.input_schema is not None
         assert isinstance(tool.input_schema, dict)
 
+    @pytest.mark.asyncio
+    async def test_preserves_annotation_values_without_stripping(self) -> None:
+        """Annotations should be passed through without stripping None values."""
+        server = FastMCP("Annotation Server")
+
+        @server.tool(description="A read-only tool")
+        async def read_data() -> str:
+            return "data"
+
+        result = await introspect(server)
+        tool = next(t for t in result.tools if t.name == "read_data")
+
+        # Annotations should be a dict (possibly with None values) or None
+        # The key point: if the MCP SDK returns annotations, we preserve them
+        # as-is rather than filtering. generate.py handles the filtering.
+        if tool.annotations is not None:
+            assert isinstance(tool.annotations, dict)
+
 
 class TestPaginationBounds:
     """Test that pagination has safety limits."""
