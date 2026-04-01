@@ -2,6 +2,10 @@
 
 Specs and interactive docs for MCP servers — like OpenAPI, but for the Model Context Protocol.
 
+<p align="center">
+  <img src="assets/demo.gif" alt="mcpspec docs UI showing tools, resources, and prompts" width="800" />
+</p>
+
 mcpspec wraps your MCP server, introspects its tools, resources, and prompts via the MCP protocol, and serves:
 
 - **`/docs`** — interactive HTML documentation (dark/light/high-contrast themes)
